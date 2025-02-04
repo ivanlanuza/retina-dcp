@@ -7,9 +7,107 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  LOST
+}
+
 model Accounts {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  isactive  Boolean  @default(true)
-  createdAt DateTime @default(now())
+  id            String         @id @default(cuid())
+  name          String         @unique
+  status        AccountStatus  @default(ACTIVE)
+  isactive      Boolean        @default(true)
+  admin         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  createdBy     Users?         @relation("AccountCreatedBy", fields: [createdById], references: [id])
+  createdById   String?
+  updatedBy     Users?         @relation("AccountUpdatedBy", fields: [updatedById], references: [id])
+  updatedById   String?
+  users         Users[]
+  roles         Role[]
+  locations     Location[]
+  userLocations UserLocation[]
+}
+
+model Users {
+  id                   String         @id @default(cuid())
+  account              Accounts       @relation(fields: [accountId], references: [id])
+  accountId            String
+  username             String         @unique
+  password             String
+  status               UserStatus     @default(ACTIVE)
+  role                 Role           @relation(fields: [roleId], references: [id])
+  roleId               String
+  tags                 String?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  createdBy            Users?         @relation("UserCreatedBy", fields: [createdById], references: [id])
+  createdById          String?
+  updatedBy            Users?         @relation("UserUpdatedBy", fields: [updatedById], references: [id])
+  updatedById          String?
+  createdAccounts      Accounts[]     @relation("AccountCreatedBy")
+  updatedAccounts      Accounts[]     @relation("AccountUpdatedBy")
+  createdRoles         Role[]         @relation("RoleCreatedBy")
+  updatedRoles         Role[]         @relation("RoleUpdatedBy")
+  createdLocations     Location[]     @relation("LocationCreatedBy")
+  updatedLocations     Location[]     @relation("LocationUpdatedBy")
+  createdUserLocations UserLocation[] @relation("UserLocationCreatedBy")
+  updatedUserLocations UserLocation[] @relation("UserLocationUpdatedBy")
+  userLocations        UserLocation[]
+  CreatedBy            Users[]        @relation("UserCreatedBy")
+  UpdatedBy            Users[]        @relation("UserUpdatedBy")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  account     Accounts @relation(fields: [accountId], references: [id])
+  accountId   String
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   Users?   @relation("RoleCreatedBy", fields: [createdById], references: [id])
+  createdById String?
+  updatedBy   Users?   @relation("RoleUpdatedBy", fields: [updatedById], references: [id])
+  updatedById String?
+  users       Users[]
+}
+
+model Location {
+  id             String         @id @default(cuid())
+  account        Accounts       @relation(fields: [accountId], references: [id])
+  accountId      String
+  name           String
+  geocoordinates String
+  tags           String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  createdBy      Users?         @relation("LocationCreatedBy", fields: [createdById], references: [id])
+  createdById    String?
+  updatedBy      Users?         @relation("LocationUpdatedBy", fields: [updatedById], references: [id])
+  updatedById    String?
+  userLocations  UserLocation[]
+}
+
+model UserLocation {
+  id          String   @id @default(cuid())
+  account     Accounts @relation(fields: [accountId], references: [id])
+  accountId   String
+  user        Users    @relation(fields: [userId], references: [id])
+  userId      String
+  location    Location @relation(fields: [locationId], references: [id])
+  locationId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   Users?   @relation("UserLocationCreatedBy", fields: [createdById], references: [id])
+  createdById String?
+  updatedBy   Users?   @relation("UserLocationUpdatedBy", fields: [updatedById], references: [id])
+  updatedById String?
 }
