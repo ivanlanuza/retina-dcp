@@ -110,4 +110,3 @@ model UserLocation {
   createdById String?
   updatedBy   Users?   @relation("UserLocationUpdatedBy", fields: [updatedById], references: [id])
   updatedById String?
-}
