@@ -1,5 +1,9 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { protectAPI } from "@/utils/auth";
 
-export default function handler(req, res) {
-  res.status(200).json({ name: "John Doe" });
-}
+export default protectAPI(async (req, res) => {
+  // Your protected route logic
+  res.status(200).json({
+    message: "Protected data",
+    user: req.user,
+  });
+});
