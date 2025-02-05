@@ -20,50 +20,50 @@ enum AccountStatus {
 }
 
 model Accounts {
-  id            String         @id @default(cuid())
-  name          String         @unique
-  status        AccountStatus  @default(ACTIVE)
-  isactive      Boolean        @default(true)
+  id            String          @id @default(cuid())
+  name          String          @unique
+  status        AccountStatus   @default(ACTIVE)
+  isactive      Boolean         @default(true)
   admin         String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  createdBy     Users?         @relation("AccountCreatedBy", fields: [createdById], references: [id])
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  createdBy     Users?          @relation("AccountCreatedBy", fields: [createdById], references: [id])
   createdById   String?
-  updatedBy     Users?         @relation("AccountUpdatedBy", fields: [updatedById], references: [id])
+  updatedBy     Users?          @relation("AccountUpdatedBy", fields: [updatedById], references: [id])
   updatedById   String?
   users         Users[]
   roles         Role[]
   locations     Location[]
-  userLocations UserLocation[]
+  userLocations UserLocations[]
 }
 
 model Users {
-  id                   String         @id @default(cuid())
-  account              Accounts       @relation(fields: [accountId], references: [id])
+  id                   String          @id @default(cuid())
+  account              Accounts        @relation(fields: [accountId], references: [id])
   accountId            String
-  username             String         @unique
+  username             String          @unique
   password             String
-  status               UserStatus     @default(ACTIVE)
-  role                 Role           @relation(fields: [roleId], references: [id])
+  status               UserStatus      @default(ACTIVE)
+  role                 Role            @relation(fields: [roleId], references: [id])
   roleId               String
   tags                 String?
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @updatedAt
-  createdBy            Users?         @relation("UserCreatedBy", fields: [createdById], references: [id])
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  createdBy            Users?          @relation("UserCreatedBy", fields: [createdById], references: [id])
   createdById          String?
-  updatedBy            Users?         @relation("UserUpdatedBy", fields: [updatedById], references: [id])
+  updatedBy            Users?          @relation("UserUpdatedBy", fields: [updatedById], references: [id])
   updatedById          String?
-  createdAccounts      Accounts[]     @relation("AccountCreatedBy")
-  updatedAccounts      Accounts[]     @relation("AccountUpdatedBy")
-  createdRoles         Role[]         @relation("RoleCreatedBy")
-  updatedRoles         Role[]         @relation("RoleUpdatedBy")
-  createdLocations     Location[]     @relation("LocationCreatedBy")
-  updatedLocations     Location[]     @relation("LocationUpdatedBy")
-  createdUserLocations UserLocation[] @relation("UserLocationCreatedBy")
-  updatedUserLocations UserLocation[] @relation("UserLocationUpdatedBy")
-  userLocations        UserLocation[]
-  CreatedBy            Users[]        @relation("UserCreatedBy")
-  UpdatedBy            Users[]        @relation("UserUpdatedBy")
+  createdAccounts      Accounts[]      @relation("AccountCreatedBy")
+  updatedAccounts      Accounts[]      @relation("AccountUpdatedBy")
+  createdRoles         Role[]          @relation("RoleCreatedBy")
+  updatedRoles         Role[]          @relation("RoleUpdatedBy")
+  createdLocations     Location[]      @relation("LocationCreatedBy")
+  updatedLocations     Location[]      @relation("LocationUpdatedBy")
+  createdUserLocations UserLocations[] @relation("UserLocationCreatedBy")
+  updatedUserLocations UserLocations[] @relation("UserLocationUpdatedBy")
+  userLocations        UserLocations[]
+  CreatedBy            Users[]         @relation("UserCreatedBy")
+  UpdatedBy            Users[]         @relation("UserUpdatedBy")
 }
 
 model Role {
@@ -81,22 +81,22 @@ model Role {
 }
 
 model Location {
-  id             String         @id @default(cuid())
-  account        Accounts       @relation(fields: [accountId], references: [id])
+  id             String          @id @default(cuid())
+  account        Accounts        @relation(fields: [accountId], references: [id])
   accountId      String
   name           String
   geocoordinates String
   tags           String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  createdBy      Users?         @relation("LocationCreatedBy", fields: [createdById], references: [id])
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  createdBy      Users?          @relation("LocationCreatedBy", fields: [createdById], references: [id])
   createdById    String?
-  updatedBy      Users?         @relation("LocationUpdatedBy", fields: [updatedById], references: [id])
+  updatedBy      Users?          @relation("LocationUpdatedBy", fields: [updatedById], references: [id])
   updatedById    String?
-  userLocations  UserLocation[]
+  userLocations  UserLocations[]
 }
 
-model UserLocation {
+model UserLocations {
   id          String   @id @default(cuid())
   account     Accounts @relation(fields: [accountId], references: [id])
   accountId   String
@@ -110,3 +110,4 @@ model UserLocation {
   createdById String?
   updatedBy   Users?   @relation("UserLocationUpdatedBy", fields: [updatedById], references: [id])
   updatedById String?
+}
