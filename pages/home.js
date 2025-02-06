@@ -1,6 +1,8 @@
 import Layout from "@/components/core/Layout";
+import useAuth from "../utils/frontend/useAuth";
 
 export default function Dashboard() {
+  useAuth();
   return (
     <Layout>
       <div className="max-w-4xl mx-auto font-sans">

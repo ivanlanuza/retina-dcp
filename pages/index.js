@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import useAuth from "../utils/frontend/useAuth";
 
 export default function Login() {
+  useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,7 +25,7 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data.body.token);
         router.push("/home");
       } else {
         setError(data.message || "Login failed");
