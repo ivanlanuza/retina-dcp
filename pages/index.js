@@ -41,7 +41,7 @@ export default function Login() {
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm bg-gray-50 rounded-md border border-gray-300 p-6">
         <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900 mb-12">
-          SEEDS
+          Retina Data Collector
         </h2>
         <form onSubmit={handleLogin} className="space-y-6">
           <div>

@@ -1,4 +1,3 @@
-import Sidebar from "./Sidebar";
 import { MainSideBar } from "./MainSideBar";
 
 export default function Layout({ children }) {

@@ -19,7 +19,7 @@ const handleLogout = () => {
   window.location.href = "/";
 };
 
-export function MainSideBar() {
+export function MainSideBar({ companyinitials }) {
   const [isCollaborationOpen, setisCollaborationOpen] = useState(true);
   const [isMasterDataOpen, setisMasterDataOpen] = useState(false);
   const [isSettingsOpen, setisSettingsOpen] = useState(false);
@@ -31,7 +31,9 @@ export function MainSideBar() {
       <div>
         <div className="mb-6">
           <Link href="/home">
-            <h2 className="text-lg font-semibold">SEEDS Home</h2>
+            <h2 className="text-lg font-semibold">
+              {companyinitials ? companyinitials : "Home"}
+            </h2>
           </Link>
         </div>
 
@@ -67,12 +69,14 @@ export function MainSideBar() {
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
+                onClick={() => router.push({ pathname: "/tools/surveys" })}
               >
                 Surveys
               </Button>
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
+                onClick={() => router.push({ pathname: "/tools/tickets" })}
               >
                 Tickets
               </Button>
@@ -191,19 +195,23 @@ export function MainSideBar() {
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
-                onClick={() => router.push({ pathname: "/profiles/users" })}
+                onClick={() => router.push({ pathname: "/settings/users" })}
               >
                 Users
               </Button>
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
+                onClick={() => router.push({ pathname: "/settings/roles" })}
               >
                 Roles
               </Button>
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
+                onClick={() =>
+                  router.push({ pathname: "/settings/datatransfers" })
+                }
               >
                 Data Transfers
               </Button>
