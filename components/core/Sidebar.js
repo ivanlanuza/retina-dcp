@@ -14,6 +14,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+const handleLogout = () => {
+  // Remove token from client storage
+  localStorage.removeItem("token"); // or sessionStorage
+  // Redirect to login page
+  window.location.href = "/";
+};
+
 const menuItems = [
   {
     title: "Documents",
@@ -41,7 +48,7 @@ export default function Sidebar() {
   const [openGroup, setOpenGroup] = useState(null);
 
   return (
-    <div className="w-64 font-sans bg-gray-900 text-white p-4 flex flex-col justify-between">
+    <div className="w-64 font-sans bg-indigo-600 text-gray-200 text-sm p-4 flex flex-col justify-between">
       <div>
         <h1 className="text-2xl font-bold font-sans mb-6">
           <Link
@@ -84,7 +91,10 @@ export default function Sidebar() {
         <button className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-700">
           <Settings className="mr-2" size={20} /> Settings
         </button>
-        <button className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-700">
+        <button
+          onClick={handleLogout}
+          className="flex items-center w-full text-left px-4 py-2 hover:bg-gray-700"
+        >
           <LogOut className="mr-2" size={20} /> Logout
         </button>
       </div>

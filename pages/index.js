@@ -38,10 +38,10 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 ">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm bg-gray-100 rounded-md border border-gray-300 p-6">
+    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 font-sans">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm bg-gray-50 rounded-md border border-gray-300 p-6">
         <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900 mb-12">
-          Login to Retina Data Collector
+          SEEDS
         </h2>
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
@@ -73,14 +73,6 @@ export default function Login() {
               >
                 Password
               </label>
-              <div className="text-sm">
-                <a
-                  href="#"
-                  className="font-semibold text-indigo-600 hover:text-indigo-500"
-                >
-                  Forgot password?
-                </a>
-              </div>
             </div>
             <div className="mt-2">
               <input
@@ -103,6 +95,14 @@ export default function Login() {
             {loading ? "Loading..." : "Login"}
           </button>
           {error && <p style={{ color: "red" }}>{error}</p>}
+          <div className="text-sm">
+            <a
+              href="#"
+              className="font-semibold text-indigo-600 hover:text-indigo-500"
+            >
+              Forgot password?
+            </a>
+          </div>
         </form>
       </div>
     </div>
