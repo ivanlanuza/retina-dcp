@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
-import { SystemResponse } from "../../utils/backend/response";  // Assuming the path to SystemResponse
+import { SystemResponse } from "../../utils/backend/response";
 
-const response = new SystemResponse();  // Instantiate SystemResponse
+const response = new SystemResponse();
 
 export const validateToken = (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
