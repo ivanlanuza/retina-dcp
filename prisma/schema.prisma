@@ -64,6 +64,9 @@ model Users {
   userLocations        UserLocations[]
   CreatedBy            Users[]         @relation("UserCreatedBy")
   UpdatedBy            Users[]         @relation("UserUpdatedBy")
+  forms                Form[]
+  submissions          Submission[]    @relation("UserSubmissions")
+  taggedForms          Form[]          @relation("FormTaggedUsers")
 }
 
 model Role {
@@ -94,6 +97,7 @@ model Location {
   updatedBy      Users?          @relation("LocationUpdatedBy", fields: [updatedById], references: [id])
   updatedById    String?
   userLocations  UserLocations[]
+  taggedForms    Form[]          @relation("FormTaggedLocations")
 }
 
 model UserLocations {
@@ -110,4 +114,76 @@ model UserLocations {
   createdById String?
   updatedBy   Users?   @relation("UserLocationUpdatedBy", fields: [updatedById], references: [id])
   updatedById String?
+}
+
+
+model Form {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  frequency   FrequencyType
+  userId      String 
+  user        Users   @relation(fields: [userId], references: [id])
+  questions   Question[]
+  submissions Submission[]
+  taggedUsers Users[]     @relation("FormTaggedUsers")
+  taggedLocations Location[] @relation("FormTaggedLocations")
+}
+
+enum FrequencyType {
+  ONETIME
+  DAILY
+  WEEKLY
+  MONTHLY
+  ALWAYSAVAILABLE
+}
+
+model Question {
+  id          Int       @id @default(autoincrement())
+  text        String
+  type        QuestionType
+  isRequired  Boolean   @default(false)
+  order       Int
+  formId      Int
+  form        Form      @relation(fields: [formId], references: [id])
+  options     AnswerOption[]
+  answers     Answer[]
+}
+
+enum QuestionType {
+  TEXT
+  INTEGER
+  CURRENCY
+  PARAGRAPH
+  CHECKLIST
+  DROPDOWN
+  RADIO
+  TABLE
+}
+
+model AnswerOption {
+  id         Int       @id @default(autoincrement())
+  text       String
+  order      Int
+  questionId Int
+  question   Question  @relation(fields: [questionId], references: [id])
+}
+
+model Submission {
+  id        Int       @id @default(autoincrement())
+  formId    Int
+  form      Form      @relation(fields: [formId], references: [id])
+  userId    String?   
+  user      Users?    @relation(fields: [userId], references: [id], name: "UserSubmissions")
+  answers   Answer[]
+  createdAt DateTime  @default(now())
+}
+
+model Answer {
+  id            Int       @id @default(autoincrement())
+  answerValue   Json
+  submissionId  Int
+  submission    Submission @relation(fields: [submissionId], references: [id])
+  questionId    Int
+  question      Question  @relation(fields: [questionId], references: [id])
 }

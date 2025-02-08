@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE `Submission` ADD COLUMN `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    ADD COLUMN `userId` VARCHAR(191) NOT NULL DEFAULT 'unknown-user';
+
+-- AddForeignKey
+ALTER TABLE `Submission` ADD CONSTRAINT `Submission_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
