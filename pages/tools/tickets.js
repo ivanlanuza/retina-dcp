@@ -1,5 +1,5 @@
 import Layout from "@/components/core/Layout";
-import UsersDataTable from "@/components/profiles/users/UsersDataTable";
+import UsersDataTable from "@/components/administration/users/UsersDataTable";
 //import useAuth from "@/utils/frontend/useAuth";
 
 export default function Dashboard() {

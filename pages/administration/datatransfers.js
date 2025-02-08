@@ -1,5 +1,5 @@
 import Layout from "@/components/core/Layout";
-import UsersDataTable from "@/components/profiles/users/UsersDataTable";
+import UsersDataTable from "@/components/administration/users/UsersDataTable";
 //import useAuth from "@/utils/frontend/useAuth";
 
 export default function Dashboard() {
@@ -8,7 +8,7 @@ export default function Dashboard() {
     <Layout>
       <div className="max-w-4xl mx-auto">
         <h2 className="text-2xl font-bold font-sans text-gray-800 mb-6">
-          Roles
+          Data Transfers
         </h2>
       </div>
     </Layout>
