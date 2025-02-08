@@ -26,7 +26,7 @@ export function MainSideBar({ companyinitials }) {
   const router = useRouter();
 
   return (
-    <div className="w-64 h-screen bg-indigo-500 border-r p-4 font-sans text-xs text-white flex flex-col justify-between ">
+    <div className="w-64 bg-indigo-500 border-r p-4 font-sans text-xs text-white flex flex-col justify-between ">
       {/* Sidebar Header */}
       <div>
         <div className="mb-6">

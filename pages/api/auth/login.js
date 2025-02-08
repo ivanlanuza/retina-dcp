@@ -9,7 +9,9 @@ const response = new SystemResponse();
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
+    return response.getFailedResponse(res, 405, {
+      message: "Method not allowed",
+    });
   }
 
   const { username, password } = req.body;
@@ -25,13 +27,17 @@ export default async function handler(req, res) {
     });
 
     if (!user) {
-      return response.getFailedResponse(res, 401, { message: "Invalid credentials" });
+      return response.getFailedResponse(res, 401, {
+        message: "Invalid credentials",
+      });
     }
 
     // Compare passwords
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return response.getFailedResponse(res, 401, { message: "Invalid credentials" });
+      return response.getFailedResponse(res, 401, {
+        message: "Invalid credentials",
+      });
     }
 
     // Create JWT token
@@ -52,6 +58,8 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("Login error:", error);
-    return response.getFailedResponse(res, 500, { message: "Internal server error" });
+    return response.getFailedResponse(res, 500, {
+      message: "Internal server error",
+    });
   }
 }

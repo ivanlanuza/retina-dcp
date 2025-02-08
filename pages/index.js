@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import useAuth from "../utils/frontend/useAuth";
 
 export default function Login() {
-  useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
