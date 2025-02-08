@@ -123,7 +123,7 @@ export default function EditViewSidebar({ open, mode, user, onClose, onSave }) {
           <Input
             id="tags"
             name="tags"
-            value={editedUser.tags.join(", ")}
+            value={editedUser.tags}
             onChange={handleTagsChange}
             readOnly={mode === "view"}
           />
