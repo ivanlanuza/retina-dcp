@@ -1,5 +1,6 @@
 "use client";
 
+import { PAGINATION_LIMIT } from "@/lib/data";
 import { useState, useMemo } from "react";
 import {
   ChevronLeft,
@@ -21,10 +22,11 @@ import DeleteModal from "../../core/DeleteModal";
 import EditViewSidebar from "./EditViewSidebar";
 import AddEntrySidebar from "./AddEntrySidebar";
 import AssignLocationsSidebar from "./AssignLocationsSidebar";
+import { useEffect } from "react";
+const ITEMS_PER_PAGE = PAGINATION_LIMIT;
 
-const ITEMS_PER_PAGE = 10;
-
-export default function UsersDataTable() {
+export default function UsersDataTable(userdata) {
+  /*
   const [data, setData] = useState([
     // Sample data
     {
@@ -47,6 +49,9 @@ export default function UsersDataTable() {
     },
     // Add more sample data as needed
   ]);
+*/
+
+  const [data, setData] = useState(userdata.userdata);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState(null);
@@ -67,8 +72,10 @@ export default function UsersDataTable() {
 
   const filteredData = useMemo(() => {
     return data.filter((user) =>
-      Object.values(user).some((value) =>
-        value.toString().toLowerCase().includes(filter.toLowerCase())
+      Object.values(user).some(
+        (value) =>
+          value != null &&
+          value.toString().toLowerCase().includes(filter.toLowerCase())
       )
     );
   }, [data, filter]);
@@ -153,23 +160,21 @@ export default function UsersDataTable() {
         <table className="min-w-full bg-white">
           <thead>
             <tr>
-              {["username", "firstName", "lastName", "status", "role"].map(
-                (column) => (
-                  <th
-                    key={column}
-                    className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                    onClick={() => handleSort(column)}
-                  >
-                    {column}
-                    {sortColumn === column &&
-                      (sortDirection === "asc" ? (
-                        <ArrowUp className="inline ml-1" />
-                      ) : (
-                        <ArrowDown className="inline ml-1" />
-                      ))}
-                  </th>
-                )
-              )}
+              {["username", "status", "role"].map((column) => (
+                <th
+                  key={column}
+                  className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSort(column)}
+                >
+                  {column}
+                  {sortColumn === column &&
+                    (sortDirection === "asc" ? (
+                      <ArrowUp className="inline ml-1" />
+                    ) : (
+                      <ArrowDown className="inline ml-1" />
+                    ))}
+                </th>
+              ))}
               <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                 Tags
               </th>
@@ -185,12 +190,6 @@ export default function UsersDataTable() {
                   {user.username}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {user.firstName}
-                </td>
-                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {user.lastName}
-                </td>
-                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                   <Badge
                     variant={user.status === "active" ? "default" : "secondary"}
                   >
@@ -198,14 +197,15 @@ export default function UsersDataTable() {
                   </Badge>
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {user.role}
+                  {user.role.name}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {user.tags.map((tag) => (
-                    <Badge key={tag} variant="outline" className="mr-1">
-                      {tag}
-                    </Badge>
-                  ))}
+                  {user.tags &&
+                    user.tags.split(",").map((tag) => (
+                      <Badge key={tag} variant="outline" className="mr-1">
+                        {tag}
+                      </Badge>
+                    ))}
                 </td>
                 <td className="px-2 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-medium">
                   <Button
