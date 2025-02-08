@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import Layout from "@/components/core/Layout";
-import UsersDataTable from "@/components/profiles/users/UsersDataTable";
+import UsersDataTable from "@/components/administration/users/UsersDataTable";
 import withAuth from "@/components/core/Auth";
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingRoles, setIsLoadingRoles] = useState(true);
   const [users, setUsers] = useState([]);
+  const [rolelist, setRoleList] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     fetch("/api/users/getUsers", {
       headers: {
         "Content-Type": "application/json",
@@ -17,13 +20,25 @@ const Home = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setUsers(data.body.users);
+        setUsers(data);
         setIsLoading(false);
-        //console.log(data.body.users);
+      });
+
+    fetch("/api/users/getRoles", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setRoleList(data);
+        //console.log(data);
+        setIsLoadingRoles(false);
       });
   }, []);
 
-  if (isLoading) {
+  if (isLoading || isLoadingRoles) {
     return (
       <Layout>
         <div className="max-w-4xl mx-auto font-sans">
@@ -42,7 +57,7 @@ const Home = () => {
           Users
         </h2>
 
-        <UsersDataTable userdata={users} />
+        <UsersDataTable userdata={users} rolelist={rolelist} />
       </div>
     </Layout>
   );

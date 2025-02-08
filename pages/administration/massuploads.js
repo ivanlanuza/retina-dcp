@@ -8,7 +8,7 @@ export default function Dashboard() {
     <Layout>
       <div className="max-w-4xl mx-auto">
         <h2 className="text-2xl font-bold font-sans text-gray-800 mb-6">
-          Daily Time Record
+          Mass Uploads
         </h2>
       </div>
     </Layout>

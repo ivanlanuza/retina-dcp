@@ -182,7 +182,7 @@ export function MainSideBar({ companyinitials }) {
                 variant="ghost"
                 className="w-full flex justify-between items-center"
               >
-                <span>Settings</span>
+                <span>Administration</span>
                 {isSettingsOpen ? (
                   <ChevronUp className="h-4 w-4" />
                 ) : (
@@ -195,14 +195,18 @@ export function MainSideBar({ companyinitials }) {
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
-                onClick={() => router.push({ pathname: "/settings/users" })}
+                onClick={() =>
+                  router.push({ pathname: "/administration/users" })
+                }
               >
                 Users
               </Button>
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
-                onClick={() => router.push({ pathname: "/settings/roles" })}
+                onClick={() =>
+                  router.push({ pathname: "/administration/roles" })
+                }
               >
                 Roles
               </Button>
@@ -210,10 +214,19 @@ export function MainSideBar({ companyinitials }) {
                 variant="ghost"
                 className="w-full justify-start font-light"
                 onClick={() =>
-                  router.push({ pathname: "/settings/datatransfers" })
+                  router.push({ pathname: "/administration/datatransfers" })
                 }
               >
                 Data Transfers
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start font-light"
+                onClick={() =>
+                  router.push({ pathname: "/administration/massuploads" })
+                }
+              >
+                Mass Uploads
               </Button>
             </CollapsibleContent>
           </Collapsible>

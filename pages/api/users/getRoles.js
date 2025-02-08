@@ -16,22 +16,19 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     try {
-      const users = await prisma.users.findMany({
-        include: {
-          account: true,
-          role: true,
-        },
+      const roles = await prisma.role.findMany({
         where: {
           accountId: accountid,
         },
       });
-      res.status(200).json(users);
+      //console.log(roles);
+      res.status(200).json(roles);
       return;
-      //return response.getSuccessResponse(res, 200, { users: users });
+      //return response.getSuccessResponse(res, 200, { roles: roles });
     } catch (error) {
       console.error(error);
       return response.getFailedResponse(res, 500, {
-        message: "Error retrieving users",
+        message: "Error retrieving roles",
         error: error.message,
       });
     }

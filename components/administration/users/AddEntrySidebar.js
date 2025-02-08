@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function AddEntrySidebar({ open, onClose, onSave }) {
+export default function AddEntrySidebar({ open, onClose, onSave, rolelist }) {
   const [newUser, setNewUser] = useState({
     username: "",
     firstName: "",
@@ -58,7 +58,7 @@ export default function AddEntrySidebar({ open, onClose, onSave }) {
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 w-64 bg-white shadow-lg p-4 transform transition-transform duration-300 ease-in-out">
+    <div className="fixed inset-y-0 right-0 w-96 bg-white shadow-lg p-4 transform transition-transform duration-300 ease-in-out">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Add New User</h2>
         <Button variant="ghost" size="sm" onClick={onClose}>
@@ -76,21 +76,13 @@ export default function AddEntrySidebar({ open, onClose, onSave }) {
           />
         </div>
         <div>
-          <Label htmlFor="firstName">First Name</Label>
+          <Label htmlFor="firstName">Password</Label>
           <Input
-            id="firstName"
-            name="firstName"
-            value={newUser.firstName}
+            id="password"
+            name="password"
+            value={newUser.password}
             onChange={handleChange}
-          />
-        </div>
-        <div>
-          <Label htmlFor="lastName">Last Name</Label>
-          <Input
-            id="lastName"
-            name="lastName"
-            value={newUser.lastName}
-            onChange={handleChange}
+            type="password"
           />
         </div>
         <div className="flex items-center space-x-2">
@@ -109,9 +101,11 @@ export default function AddEntrySidebar({ open, onClose, onSave }) {
               <SelectValue placeholder="Select a role" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Admin">Admin</SelectItem>
-              <SelectItem value="User">User</SelectItem>
-              <SelectItem value="Guest">Guest</SelectItem>
+              {rolelist.map((role) => (
+                <SelectItem key={role.id} value={role.name}>
+                  {role.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

@@ -25,33 +25,8 @@ import AssignLocationsSidebar from "./AssignLocationsSidebar";
 import { useEffect } from "react";
 const ITEMS_PER_PAGE = PAGINATION_LIMIT;
 
-export default function UsersDataTable(userdata) {
-  /*
-  const [data, setData] = useState([
-    // Sample data
-    {
-      id: "1",
-      username: "johndoe",
-      firstName: "John",
-      lastName: "Doe",
-      status: "active",
-      role: "Admin",
-      tags: ["VIP", "New"],
-    },
-    {
-      id: "2",
-      username: "janedoe",
-      firstName: "Jane",
-      lastName: "Doe",
-      status: "inactive",
-      role: "User",
-      tags: ["Regular"],
-    },
-    // Add more sample data as needed
-  ]);
-*/
-
-  const [data, setData] = useState(userdata.userdata);
+export default function UsersDataTable({ userdata, rolelist }) {
+  const [data, setData] = useState(userdata);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState(null);
@@ -147,7 +122,11 @@ export default function UsersDataTable(userdata) {
           className="max-w-sm"
         />
         <div className="space-x-2">
-          <Button onClick={() => setAddEntrySidebar(true)}>
+          <Button
+            onClick={() => {
+              setAddEntrySidebar(true);
+            }}
+          >
             <Plus className="mr-2 h-4 w-4" /> Add New
           </Button>
           <Button onClick={() => setMassUploadSidebar(true)}>
@@ -160,7 +139,7 @@ export default function UsersDataTable(userdata) {
         <table className="min-w-full bg-white">
           <thead>
             <tr>
-              {["username", "status", "role"].map((column) => (
+              {["username", "status", "roleId"].map((column) => (
                 <th
                   key={column}
                   className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
@@ -191,7 +170,7 @@ export default function UsersDataTable(userdata) {
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                   <Badge
-                    variant={user.status === "active" ? "default" : "secondary"}
+                    variant={user.status === "ACTIVE" ? "secondary" : "outline"}
                   >
                     {user.status}
                   </Badge>
@@ -287,6 +266,7 @@ export default function UsersDataTable(userdata) {
           setData([...data, { ...newUser, id: String(data.length + 1) }]);
           setAddEntrySidebar(false);
         }}
+        rolelist={rolelist}
       />
 
       <MassUploadSidebar
