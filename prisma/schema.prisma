@@ -20,7 +20,7 @@ enum AccountStatus {
 }
 
 model Accounts {
-  id            String          @id @default(cuid())
+  id            Int             @id @default(autoincrement())
   name          String          @unique
   status        AccountStatus   @default(ACTIVE)
   isactive      Boolean         @default(true)
@@ -28,109 +28,108 @@ model Accounts {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   createdBy     Users?          @relation("AccountCreatedBy", fields: [createdById], references: [id])
-  createdById   String?
+  createdById   Int?
   updatedBy     Users?          @relation("AccountUpdatedBy", fields: [updatedById], references: [id])
-  updatedById   String?
+  updatedById   Int?
   users         Users[]
-  roles         Role[]
-  locations     Location[]
+  roles         Roles[]
+  locations     Locations[]
   userLocations UserLocations[]
 }
 
 model Users {
-  id                   String          @id @default(cuid())
+  id                   Int             @id @default(autoincrement())
   account              Accounts        @relation(fields: [accountId], references: [id])
-  accountId            String
+  accountId            Int
   username             String          @unique
   password             String
   status               UserStatus      @default(ACTIVE)
-  role                 Role            @relation(fields: [roleId], references: [id])
-  roleId               String
+  role                 Roles           @relation(fields: [roleId], references: [id])
+  roleId               Int
   tags                 String?
   createdAt            DateTime        @default(now())
   updatedAt            DateTime        @updatedAt
   createdBy            Users?          @relation("UserCreatedBy", fields: [createdById], references: [id])
-  createdById          String?
+  createdById          Int?
   updatedBy            Users?          @relation("UserUpdatedBy", fields: [updatedById], references: [id])
-  updatedById          String?
+  updatedById          Int?
   createdAccounts      Accounts[]      @relation("AccountCreatedBy")
   updatedAccounts      Accounts[]      @relation("AccountUpdatedBy")
-  createdRoles         Role[]          @relation("RoleCreatedBy")
-  updatedRoles         Role[]          @relation("RoleUpdatedBy")
-  createdLocations     Location[]      @relation("LocationCreatedBy")
-  updatedLocations     Location[]      @relation("LocationUpdatedBy")
+  createdRoles         Roles[]         @relation("RoleCreatedBy")
+  updatedRoles         Roles[]         @relation("RoleUpdatedBy")
+  createdLocations     Locations[]     @relation("LocationCreatedBy")
+  updatedLocations     Locations[]     @relation("LocationUpdatedBy")
   createdUserLocations UserLocations[] @relation("UserLocationCreatedBy")
   updatedUserLocations UserLocations[] @relation("UserLocationUpdatedBy")
   userLocations        UserLocations[]
   CreatedBy            Users[]         @relation("UserCreatedBy")
   UpdatedBy            Users[]         @relation("UserUpdatedBy")
-  forms                Form[]
-  submissions          Submission[]    @relation("UserSubmissions")
-  taggedForms          Form[]          @relation("FormTaggedUsers")
+  forms                Forms[]
+  submissions          Submissions[]   @relation("UserSubmissions")
+  taggedForms          Forms[]         @relation("FormTaggedUsers")
 }
 
-model Role {
-  id          String   @id @default(cuid())
+model Roles {
+  id          Int      @id @default(autoincrement())
   account     Accounts @relation(fields: [accountId], references: [id])
-  accountId   String
+  accountId   Int
   name        String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   createdBy   Users?   @relation("RoleCreatedBy", fields: [createdById], references: [id])
-  createdById String?
+  createdById Int?
   updatedBy   Users?   @relation("RoleUpdatedBy", fields: [updatedById], references: [id])
-  updatedById String?
+  updatedById Int?
   users       Users[]
 }
 
-model Location {
-  id             String          @id @default(cuid())
+model Locations {
+  id             Int             @id @default(autoincrement())
   account        Accounts        @relation(fields: [accountId], references: [id])
-  accountId      String
+  accountId      Int
   name           String
   geocoordinates String
   tags           String?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   createdBy      Users?          @relation("LocationCreatedBy", fields: [createdById], references: [id])
-  createdById    String?
+  createdById    Int?
   updatedBy      Users?          @relation("LocationUpdatedBy", fields: [updatedById], references: [id])
-  updatedById    String?
+  updatedById    Int?
   userLocations  UserLocations[]
-  taggedForms    Form[]          @relation("FormTaggedLocations")
+  taggedForms    Forms[]         @relation("FormTaggedLocations")
 }
 
 model UserLocations {
-  id          String   @id @default(cuid())
-  account     Accounts @relation(fields: [accountId], references: [id])
-  accountId   String
-  user        Users    @relation(fields: [userId], references: [id])
-  userId      String
-  location    Location @relation(fields: [locationId], references: [id])
-  locationId  String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  createdBy   Users?   @relation("UserLocationCreatedBy", fields: [createdById], references: [id])
-  createdById String?
-  updatedBy   Users?   @relation("UserLocationUpdatedBy", fields: [updatedById], references: [id])
-  updatedById String?
-}
-
-
-model Form {
   id          Int       @id @default(autoincrement())
-  title       String
-  description String?
-  frequency   FrequencyType
-  userId      String 
-  user        Users   @relation(fields: [userId], references: [id])
-  questions   Question[]
-  submissions Submission[]
-  taggedUsers Users[]     @relation("FormTaggedUsers")
-  taggedLocations Location[] @relation("FormTaggedLocations")
+  account     Accounts  @relation(fields: [accountId], references: [id])
+  accountId   Int
+  user        Users     @relation(fields: [userId], references: [id])
+  userId      Int
+  location    Locations @relation(fields: [locationId], references: [id])
+  locationId  Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  createdBy   Users?    @relation("UserLocationCreatedBy", fields: [createdById], references: [id])
+  createdById Int?
+  updatedBy   Users?    @relation("UserLocationUpdatedBy", fields: [updatedById], references: [id])
+  updatedById Int?
 }
 
-enum FrequencyType {
+model Forms {
+  id              Int            @id @default(autoincrement())
+  title           String
+  description     String?
+  frequency       FrequencyTypes
+  userId          Int
+  user            Users          @relation(fields: [userId], references: [id])
+  questions       Questions[]
+  submissions     Submissions[]
+  taggedUsers     Users[]        @relation("FormTaggedUsers")
+  taggedLocations Locations[]    @relation("FormTaggedLocations")
+}
+
+enum FrequencyTypes {
   ONETIME
   DAILY
   WEEKLY
@@ -138,19 +137,19 @@ enum FrequencyType {
   ALWAYSAVAILABLE
 }
 
-model Question {
-  id          Int       @id @default(autoincrement())
-  text        String
-  type        QuestionType
-  isRequired  Boolean   @default(false)
-  order       Int
-  formId      Int
-  form        Form      @relation(fields: [formId], references: [id])
-  options     AnswerOption[]
-  answers     Answer[]
+model Questions {
+  id         Int             @id @default(autoincrement())
+  text       String
+  type       QuestionTypes
+  isRequired Boolean         @default(false)
+  order      Int
+  formId     Int
+  form       Forms           @relation(fields: [formId], references: [id])
+  options    AnswerOptions[]
+  answers    Answers[]
 }
 
-enum QuestionType {
+enum QuestionTypes {
   TEXT
   INTEGER
   CURRENCY
@@ -161,29 +160,29 @@ enum QuestionType {
   TABLE
 }
 
-model AnswerOption {
+model AnswerOptions {
   id         Int       @id @default(autoincrement())
   text       String
   order      Int
   questionId Int
-  question   Question  @relation(fields: [questionId], references: [id])
+  question   Questions @relation(fields: [questionId], references: [id])
 }
 
-model Submission {
+model Submissions {
   id        Int       @id @default(autoincrement())
   formId    Int
-  form      Form      @relation(fields: [formId], references: [id])
-  userId    String?   
+  form      Forms     @relation(fields: [formId], references: [id])
+  userId    Int?
   user      Users?    @relation(fields: [userId], references: [id], name: "UserSubmissions")
-  answers   Answer[]
+  answers   Answers[]
   createdAt DateTime  @default(now())
 }
 
-model Answer {
-  id            Int       @id @default(autoincrement())
-  answerValue   Json
-  submissionId  Int
-  submission    Submission @relation(fields: [submissionId], references: [id])
-  questionId    Int
-  question      Question  @relation(fields: [questionId], references: [id])
+model Answers {
+  id           Int         @id @default(autoincrement())
+  answerValue  Json
+  submissionId Int
+  submission   Submissions @relation(fields: [submissionId], references: [id])
+  questionId   Int
+  question     Questions   @relation(fields: [questionId], references: [id])
 }

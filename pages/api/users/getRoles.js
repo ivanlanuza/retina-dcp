@@ -2,6 +2,7 @@ import { SystemResponse } from "../../../utils/backend/response";
 import { validateToken } from "../../../utils/backend/middleware";
 import { PrismaClient } from "@prisma/client";
 import { jwtDecode } from "jwt-decode";
+import { IRIPPLE_ADMIN_NAME } from "../../../lib/data";
 
 const prisma = new PrismaClient();
 const response = new SystemResponse();
@@ -16,12 +17,14 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     try {
-      const roles = await prisma.role.findMany({
+      const roles = await prisma.roles.findMany({
         where: {
           accountId: accountid,
+          name: {
+            not: IRIPPLE_ADMIN_NAME,
+          },
         },
       });
-      //console.log(roles);
       res.status(200).json(roles);
       return;
       //return response.getSuccessResponse(res, 200, { roles: roles });

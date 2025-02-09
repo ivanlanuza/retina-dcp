@@ -13,6 +13,7 @@ import {
   Plus,
   Upload,
   MapPin,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +26,7 @@ import AssignLocationsSidebar from "./AssignLocationsSidebar";
 import { useEffect } from "react";
 const ITEMS_PER_PAGE = PAGINATION_LIMIT;
 
-export default function UsersDataTable({ userdata, rolelist }) {
+export default function UsersDataTable({ userdata, rolelist, onSave }) {
   const [data, setData] = useState(userdata);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -129,8 +130,8 @@ export default function UsersDataTable({ userdata, rolelist }) {
           >
             <Plus className="mr-2 h-4 w-4" /> Add New
           </Button>
-          <Button onClick={() => setMassUploadSidebar(true)}>
-            <Upload className="mr-2 h-4 w-4" /> Mass Upload
+          <Button onClick={() => alert("Generate CSV")}>
+            <Download className="mr-2 h-4 w-4" /> Download List
           </Button>
         </div>
       </div>
@@ -262,10 +263,11 @@ export default function UsersDataTable({ userdata, rolelist }) {
       <AddEntrySidebar
         open={addEntrySidebar}
         onClose={() => setAddEntrySidebar(false)}
-        onSave={(newUser) => {
+        /*onSave={(newUser) => {
           setData([...data, { ...newUser, id: String(data.length + 1) }]);
           setAddEntrySidebar(false);
-        }}
+        }}*/
+        onSave={onSave}
         rolelist={rolelist}
       />
 

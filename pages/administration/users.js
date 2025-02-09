@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Layout from "@/components/core/Layout";
-import UsersDataTable from "@/components/administration/users/UsersDataTable";
+import UsersDataTable from "@/components/profiles/users/UsersDataTable";
 import withAuth from "@/components/core/Auth";
 
-const Home = () => {
+const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingRoles, setIsLoadingRoles] = useState(true);
   const [users, setUsers] = useState([]);
@@ -36,7 +36,7 @@ const Home = () => {
         //console.log(data);
         setIsLoadingRoles(false);
       });
-  }, []);
+  }, [isLoading]);
 
   if (isLoading || isLoadingRoles) {
     return (
@@ -56,11 +56,16 @@ const Home = () => {
         <h2 className="text-2xl font-bold font-sans text-gray-800 mb-6">
           Users
         </h2>
-
-        <UsersDataTable userdata={users} rolelist={rolelist} />
+        {users && (
+          <UsersDataTable
+            userdata={users}
+            rolelist={rolelist}
+            onSave={(e) => setIsLoading(true)}
+          />
+        )}
       </div>
     </Layout>
   );
 };
 
-export default withAuth(Home);
+export default withAuth(App);

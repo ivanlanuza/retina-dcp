@@ -1,9 +1,7 @@
 import Layout from "@/components/core/Layout";
-import UsersDataTable from "@/components/administration/users/UsersDataTable";
-//import useAuth from "@/utils/frontend/useAuth";
+import withAuth from "@/components/core/Auth";
 
-export default function Dashboard() {
-  //  useAuth();
+const App = () => {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto">
@@ -13,4 +11,6 @@ export default function Dashboard() {
       </div>
     </Layout>
   );
-}
+};
+
+export default withAuth(App);
