@@ -1,9 +1,6 @@
 import Layout from "@/components/core/Layout";
-import UsersDataTable from "@/components/administration/users/UsersDataTable";
-//import useAuth from "@/utils/frontend/useAuth";
 
 export default function Dashboard() {
-  //  useAuth();
   return (
     <Layout>
       <div className="max-w-4xl mx-auto">
