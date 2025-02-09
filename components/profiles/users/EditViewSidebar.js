@@ -12,46 +12,89 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function EditViewSidebar({ open, mode, user, onClose, onSave }) {
-  const [editedUser, setEditedUser] = useState(null);
+export default function EditViewSidebar({
+  open,
+  mode,
+  user,
+  onClose,
+  onSave,
+  rolelist,
+}) {
+  const [editedusername, setEditedUsername] = useState("");
+  const [editedfirstname, setEditedFirstName] = useState("");
+  const [editedlastname, setEditedLastName] = useState("");
+  const [editedstatus, setEditedStatus] = useState("");
+  const [editedrole, setEditedRole] = useState("");
+  const [editedtags, setEditedTags] = useState("");
+  const [validationerror, setValidationError] = useState("");
 
   useEffect(() => {
     if (user) {
-      setEditedUser({ ...user });
+      setEditedUsername(user.username);
+      setEditedFirstName(user.firstname);
+      setEditedLastName(user.lastname);
+      setEditedStatus(user.status);
+      setEditedRole(user.roleId);
+      setEditedTags(user.tags);
     }
   }, [user]);
 
-  if (!open || !editedUser) return null;
+  if (!open || !user.id) return null;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditedUser((prev) => ({ ...prev, [name]: value }));
-  };
+  async function handleSubmitClose(closeonsave) {
+    var errorflag = false;
+    setValidationError("");
 
-  const handleStatusChange = (checked) => {
-    setEditedUser((prev) => ({
-      ...prev,
-      status: checked ? "active" : "inactive",
-    }));
-  };
-
-  const handleRoleChange = (value) => {
-    setEditedUser((prev) => ({ ...prev, role: value }));
-  };
-
-  const handleTagsChange = (e) => {
-    const tags = e.target.value.split(",").map((tag) => tag.trim());
-    setEditedUser((prev) => ({ ...prev, tags }));
-  };
-
-  const handleSave = () => {
-    if (editedUser) {
-      onSave(editedUser);
+    if (editedusername == "" || editedusername == null) {
+      errorflag = true;
+      setValidationError("Please input valid username!");
     }
-  };
+
+    if (editedrole == "" || editedrole == null) {
+      errorflag = true;
+      setValidationError("Please select a role!");
+    }
+
+    if (errorflag === false) {
+      setValidationError("");
+      const token = localStorage.getItem("token");
+      let datapass = JSON.stringify({
+        userid: user.id,
+        username: editedusername,
+        firstname: editedfirstname,
+        lastname: editedlastname,
+        status: editedstatus,
+        role: editedrole,
+        tags: editedtags,
+      });
+
+      const response = await fetch("/api/users/edit", {
+        body: datapass,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        method: "PUT",
+      });
+
+      if (response.ok) {
+        if (closeonsave) {
+          onClose();
+          onSave();
+        }
+        setEditedUsername("");
+        setEditedFirstName("");
+        setEditedLastName("");
+        setEditedStatus("");
+        setEditedRole("");
+        setEditedTags("");
+        setValidationError("");
+      }
+    }
+  }
 
   return (
-    <div className="fixed inset-y-0 right-0 w-64 bg-white shadow-lg p-4 transform transition-transform duration-300 ease-in-out">
+    <div className="fixed inset-y-0 right-0 w-96 bg-white shadow-lg p-4 transform transition-transform duration-300 ease-in-out">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">
           {mode === "edit" ? "Edit User" : "View User"}
@@ -66,28 +109,37 @@ export default function EditViewSidebar({ open, mode, user, onClose, onSave }) {
           <Input
             id="username"
             name="username"
-            value={editedUser.username}
-            onChange={handleChange}
+            value={editedusername}
+            onChange={(e) => {
+              setEditedUsername(e.target.value);
+              setValidationError("");
+            }}
             readOnly={mode === "view"}
           />
         </div>
         <div>
-          <Label htmlFor="firstName">First Name</Label>
+          <Label htmlFor="username">First Name</Label>
           <Input
-            id="firstName"
-            name="firstName"
-            value={editedUser.firstName}
-            onChange={handleChange}
+            id="firstname"
+            name="firstname"
+            value={editedfirstname}
+            onChange={(e) => {
+              setEditedFirstName(e.target.value);
+              setValidationError("");
+            }}
             readOnly={mode === "view"}
           />
         </div>
         <div>
-          <Label htmlFor="lastName">Last Name</Label>
+          <Label htmlFor="username">Last Name</Label>
           <Input
-            id="lastName"
-            name="lastName"
-            value={editedUser.lastName}
-            onChange={handleChange}
+            id="lastname"
+            name="lastname"
+            value={editedlastname}
+            onChange={(e) => {
+              setEditedLastName(e.target.value);
+              setValidationError("");
+            }}
             readOnly={mode === "view"}
           />
         </div>
@@ -95,26 +147,34 @@ export default function EditViewSidebar({ open, mode, user, onClose, onSave }) {
           <Label htmlFor="status">Status</Label>
           <Switch
             id="status"
-            checked={editedUser.status === "active"}
-            onCheckedChange={handleStatusChange}
+            checked={editedstatus != "ACTIVE" ? false : true}
+            onCheckedChange={(e) => {
+              setEditedStatus(editedstatus != "ACTIVE" ? "ACTIVE" : "INACTIVE");
+              setValidationError("");
+            }}
             disabled={mode === "view"}
           />
-          <span>{editedUser.status}</span>
+          <span>{editedstatus}</span>
         </div>
         <div>
           <Label htmlFor="role">Role</Label>
           <Select
-            value={editedUser.role}
-            onValueChange={handleRoleChange}
+            value={editedrole}
+            onValueChange={(e) => {
+              setEditedRole(e);
+              setValidationError("");
+            }}
             disabled={mode === "view"}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select a role" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Admin">Admin</SelectItem>
-              <SelectItem value="User">User</SelectItem>
-              <SelectItem value="Guest">Guest</SelectItem>
+              {rolelist.map((role) => (
+                <SelectItem key={role.name} value={role.id}>
+                  {role.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -123,17 +183,24 @@ export default function EditViewSidebar({ open, mode, user, onClose, onSave }) {
           <Input
             id="tags"
             name="tags"
-            value={editedUser.tags}
-            onChange={handleTagsChange}
+            value={editedtags}
+            onChange={(e) => {
+              setEditedTags(e.target.value);
+              setValidationError("");
+            }}
             readOnly={mode === "view"}
           />
         </div>
       </div>
       {mode === "edit" && (
-        <Button className="mt-4 w-full" onClick={handleSave}>
+        <Button
+          className="mt-4 w-full"
+          onClick={(e) => handleSubmitClose(true)}
+        >
           Save Changes
         </Button>
       )}
+      <p className="mt-4 text-xs text-red-400">{validationerror}</p>
     </div>
   );
 }

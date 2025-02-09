@@ -15,7 +15,7 @@ import {
 export default function AddEntrySidebar({ open, onClose, onSave, rolelist }) {
   const [newrecordusername, setNewRecordUsername] = useState("");
   const [newrecordpassword, setNewRecordPassword] = useState("");
-  const [newrecordstatus, setNewRecordStatus] = useState(true);
+  const [newrecordstatus, setNewRecordStatus] = useState("ACTIVE");
   const [newrecordrole, setNewRecordRole] = useState("");
   const [newrecordtags, setNewRecordTags] = useState("");
   const [newrecordpasswordconfirm, setNewRecordPasswordConfirm] = useState("");
@@ -30,39 +30,6 @@ export default function AddEntrySidebar({ open, onClose, onSave, rolelist }) {
   });
 
   if (!open) return null;
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNewUser((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleStatusChange = (checked) => {
-    setNewUser((prev) => ({
-      ...prev,
-      status: checked ? "active" : "inactive",
-    }));
-  };
-
-  const handleRoleChange = (value) => {
-    setNewUser((prev) => ({ ...prev, role: value }));
-  };
-
-  const handleTagsChange = (e) => {
-    const tags = e.target.value.split(",").map((tag) => tag.trim());
-    setNewUser((prev) => ({ ...prev, tags }));
-  };
-
-  const handleSave = () => {
-    onSave(newUser);
-    setNewUser({
-      username: "",
-      firstName: "",
-      lastName: "",
-      status: "active",
-      role: "User",
-      tags: [],
-    });
-  };
 
   async function handleSubmitClose(closeonsave) {
     var errorflag = false;
@@ -180,12 +147,14 @@ export default function AddEntrySidebar({ open, onClose, onSave, rolelist }) {
           <Label htmlFor="status">Status</Label>
           <Switch
             id="status"
-            checked={newrecordstatus}
+            checked={newrecordstatus != "ACTIVE" ? false : true}
             onCheckedChange={(e) => {
-              setNewRecordStatus(!newrecordstatus);
+              setNewRecordStatus(
+                newrecordstatus != "ACTIVE" ? "ACTIVE" : "INACTIVE"
+              );
             }}
           />
-          <span>{newUser.status}</span>
+          <span>{newrecordstatus}</span>
         </div>
         <div>
           <Label htmlFor="role">Role</Label>

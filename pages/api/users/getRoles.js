@@ -23,6 +23,7 @@ export default async function handler(req, res) {
           name: {
             not: IRIPPLE_ADMIN_NAME,
           },
+          isdeleted: false,
         },
       });
       res.status(200).json(roles);

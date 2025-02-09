@@ -19,17 +19,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import MassUploadSidebar from "../../core/MassUploadSidebar";
 import DeleteModal from "../../core/DeleteModal";
 import EditViewSidebar from "./EditViewSidebar";
 import AddEntrySidebar from "./AddEntrySidebar";
 import AssignLocationsSidebar from "./AssignLocationsSidebar";
 import { useEffect } from "react";
-const ITEMS_PER_PAGE = PAGINATION_LIMIT;
 
 export default function UsersDataTable({ userdata, rolelist, onSave }) {
   const [data, setData] = useState(userdata);
-  const [csvData, setCsvData] = useState("");
+  const ITEMS_PER_PAGE = PAGINATION_LIMIT;
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState(null);
@@ -41,7 +39,6 @@ export default function UsersDataTable({ userdata, rolelist, onSave }) {
     user: null,
   });
   const [addEntrySidebar, setAddEntrySidebar] = useState(false);
-  const [massUploadSidebar, setMassUploadSidebar] = useState(false);
   const [deleteModal, setDeleteModal] = useState({ open: false, user: null });
   const [assignLocationsSidebar, setAssignLocationsSidebar] = useState({
     open: false,
@@ -97,12 +94,27 @@ export default function UsersDataTable({ userdata, rolelist, onSave }) {
     setDeleteModal({ open: true, user });
   };
 
-  const confirmDelete = () => {
+  async function confirmDelete() {
     if (deleteModal.user) {
-      setData(data.filter((user) => user.id !== deleteModal.user.id));
-      setDeleteModal({ open: false, user: null });
+      const token = localStorage.getItem("token");
+      let datapass = JSON.stringify({
+        userid: deleteModal.user.id,
+      });
+
+      const response = await fetch("/api/users/delete", {
+        body: datapass,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        method: "PUT",
+      });
+      if (response.ok) {
+        setDeleteModal({ open: false, user: null });
+        onSave();
+      }
     }
-  };
+  }
 
   const handleAssignLocations = (user) => {
     setAssignLocationsSidebar({ open: true, user });
@@ -256,40 +268,24 @@ export default function UsersDataTable({ userdata, rolelist, onSave }) {
         open={editViewSidebar.open}
         mode={editViewSidebar.mode}
         user={editViewSidebar.user}
-        onClose={() =>
-          setEditViewSidebar({ open: false, mode: "view", user: null })
-        }
-        onSave={(updatedUser) => {
-          setData(data.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
-          setEditViewSidebar({ open: false, mode: "view", user: null });
-        }}
+        onClose={() => setEditViewSidebar(false)}
+        onSave={onSave}
+        rolelist={rolelist}
       />
 
       <AddEntrySidebar
         open={addEntrySidebar}
         onClose={() => setAddEntrySidebar(false)}
-        /*onSave={(newUser) => {
-          setData([...data, { ...newUser, id: String(data.length + 1) }]);
-          setAddEntrySidebar(false);
-        }}*/
         onSave={onSave}
         rolelist={rolelist}
       />
 
-      <MassUploadSidebar
-        open={massUploadSidebar}
-        onClose={() => setMassUploadSidebar(false)}
-        onUpload={(newUsers) => {
-          setData([...data, ...newUsers]);
-          setMassUploadSidebar(false);
-        }}
-        instructions={"Mass Upload of users. Please use the correct template."}
-      />
-
       <DeleteModal
         open={deleteModal.open}
-        onClose={() => setDeleteModal({ open: false, user: null })}
-        onConfirm={confirmDelete}
+        onClose={() => {
+          setDeleteModal({ open: false, user: null });
+        }}
+        onConfirm={(e) => confirmDelete()}
         username={deleteModal.user?.username}
         title="Are you sure you want to delete this user?"
         description={`This action cannot be undone. This will permanently delete the user account for ${deleteModal.user?.username} and remove their data from our servers.`}
