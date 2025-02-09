@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     try {
       const roles = await prisma.roles.findMany({
         where: {
-          accountId: accountid,
+          accountId: parseInt(accountid),
           name: {
             not: IRIPPLE_ADMIN_NAME,
           },
