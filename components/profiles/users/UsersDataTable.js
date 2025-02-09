@@ -2,6 +2,7 @@
 
 import { PAGINATION_LIMIT } from "@/lib/data";
 import { useState, useMemo } from "react";
+import { CSVLink } from "react-csv";
 import {
   ChevronLeft,
   ChevronRight,
@@ -28,6 +29,7 @@ const ITEMS_PER_PAGE = PAGINATION_LIMIT;
 
 export default function UsersDataTable({ userdata, rolelist, onSave }) {
   const [data, setData] = useState(userdata);
+  const [csvData, setCsvData] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState(null);
@@ -130,9 +132,12 @@ export default function UsersDataTable({ userdata, rolelist, onSave }) {
           >
             <Plus className="mr-2 h-4 w-4" /> Add New
           </Button>
-          <Button onClick={() => alert("Generate CSV")}>
-            <Download className="mr-2 h-4 w-4" /> Download List
-          </Button>
+          <CSVLink data={filteredData} filename={"users_download.csv"}>
+            //we can still remove some columns and spead other columns
+            <Button>
+              <Download className="mr-2 h-4 w-4" /> Download List
+            </Button>
+          </CSVLink>
         </div>
       </div>
 
