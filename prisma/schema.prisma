@@ -47,6 +47,8 @@ model Accounts {
   Competitors      Competitors[]
   CompetitorBrands CompetitorBrands[]
   Products         Products[]
+  News             News[]
+  NewsUsers        NewsUsers[]
 }
 
 model Users {
@@ -90,6 +92,7 @@ model Users {
   submissions          Submissions[]   @relation("UserSubmissions")
   taggedForms          Forms[]         @relation("FormTaggedUsers")
   Users                Users[]         @relation("UserManager")
+  NewsUsers            NewsUsers[]
 }
 
 model Roles {
@@ -376,4 +379,40 @@ model Products {
   brand         Brands?        @relation(fields: [brandid], references: [id])
   supplierid    Int?
   supplier      Suppliers?     @relation(fields: [supplierid], references: [id])
+}
+
+model News {
+  id          Int            @id @default(autoincrement())
+  accountid   Int
+  account     Accounts       @relation(fields: [accountid], references: [id])
+  title       String
+  subtitle    String?
+  newsinfo    String?        @db.Text
+  visibility  NewsVisibility @default(ALL)
+  ispublished Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  NewsUsers   NewsUsers[]
+}
+
+enum NewsVisibility {
+  ALL
+  LIMITED
+}
+
+model NewsUsers {
+  id        Int        @id @default(autoincrement())
+  accountid Int
+  account   Accounts   @relation(fields: [accountid], references: [id])
+  newsid    Int
+  News      News       @relation(fields: [newsid], references: [id])
+  userid    Int
+  user      Users      @relation(fields: [userid], references: [id])
+  status    NewsStatus
+}
+
+enum NewsStatus {
+  SENT
+  OPENED
+  READ
 }
