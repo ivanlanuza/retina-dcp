@@ -20,21 +20,33 @@ enum AccountStatus {
 }
 
 model Accounts {
-  id            Int             @id @default(autoincrement())
-  name          String          @unique
-  status        AccountStatus   @default(ACTIVE)
-  isactive      Boolean         @default(true)
-  admin         String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  createdBy     Users?          @relation("AccountCreatedBy", fields: [createdById], references: [id])
-  createdById   Int?
-  updatedBy     Users?          @relation("AccountUpdatedBy", fields: [updatedById], references: [id])
-  updatedById   Int?
-  users         Users[]
-  roles         Roles[]
-  locations     Locations[]
-  userLocations UserLocations[]
+  id               Int                @id @default(autoincrement())
+  name             String             @unique
+  status           AccountStatus      @default(ACTIVE)
+  isactive         Boolean            @default(true)
+  admin            String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  createdBy        Users?             @relation("AccountCreatedBy", fields: [createdById], references: [id])
+  createdById      Int?
+  updatedBy        Users?             @relation("AccountUpdatedBy", fields: [updatedById], references: [id])
+  updatedById      Int?
+  users            Users[]
+  roles            Roles[]
+  locations        Locations[]
+  userLocations    UserLocations[]
+  Agencies         Agencies[]
+  Teams            Teams[]
+  Customers        Customers[]
+  Suppliers        Suppliers[]
+  Brands           Brands[]
+  Categories       Categories[]
+  Subcategories    Subcategories[]
+  Classes          Classes[]
+  Subclasses       Subclasses[]
+  Competitors      Competitors[]
+  CompetitorBrands CompetitorBrands[]
+  Products         Products[]
 }
 
 model Users {
@@ -43,6 +55,16 @@ model Users {
   accountId            Int
   username             String          @unique
   password             String
+  firstname            String?
+  lastname             String?
+  email                String?
+  mobile               String?
+  agencyid             Int?
+  agency               Agencies?       @relation(fields: [agencyid], references: [id])
+  teamid               Int?
+  team                 Teams?          @relation(fields: [teamid], references: [id])
+  managerid            Int?
+  manager              Users?          @relation("UserManager", fields: [managerid], references: [id])
   status               UserStatus      @default(ACTIVE)
   role                 Roles           @relation(fields: [roleId], references: [id])
   roleId               Int
@@ -67,6 +89,7 @@ model Users {
   forms                Forms[]
   submissions          Submissions[]   @relation("UserSubmissions")
   taggedForms          Forms[]         @relation("FormTaggedUsers")
+  Users                Users[]         @relation("UserManager")
 }
 
 model Roles {
@@ -88,7 +111,7 @@ model Locations {
   account        Accounts        @relation(fields: [accountId], references: [id])
   accountId      Int
   name           String
-  geocoordinates String
+  geocoordinates String?
   tags           String?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
@@ -96,6 +119,8 @@ model Locations {
   createdById    Int?
   updatedBy      Users?          @relation("LocationUpdatedBy", fields: [updatedById], references: [id])
   updatedById    Int?
+  customerid     Int?
+  customer       Customers?      @relation(fields: [customerid], references: [id])
   userLocations  UserLocations[]
   taggedForms    Forms[]         @relation("FormTaggedLocations")
 }
@@ -185,4 +210,170 @@ model Answers {
   submission   Submissions @relation(fields: [submissionId], references: [id])
   questionId   Int
   question     Questions   @relation(fields: [questionId], references: [id])
+}
+
+model Agencies {
+  id          Int      @id @default(autoincrement())
+  name        String
+  accountid   Int
+  account     Accounts @relation(fields: [accountid], references: [id])
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Users       Users[]
+}
+
+model Teams {
+  id          Int      @id @default(autoincrement())
+  name        String
+  accountid   Int
+  account     Accounts @relation(fields: [accountid], references: [id])
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Users       Users[]
+}
+
+model Customers {
+  id          Int         @id @default(autoincrement())
+  name        String
+  accountid   Int
+  account     Accounts    @relation(fields: [accountid], references: [id])
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  Locations   Locations[]
+}
+
+model Suppliers {
+  id          Int        @id @default(autoincrement())
+  name        String
+  accountid   Int
+  account     Accounts   @relation(fields: [accountid], references: [id])
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Products    Products[]
+}
+
+model Brands {
+  id               Int                @id @default(autoincrement())
+  name             String
+  accountid        Int
+  account          Accounts           @relation(fields: [accountid], references: [id])
+  description      String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  CompetitorBrands CompetitorBrands[]
+  Products         Products[]
+}
+
+model Categories {
+  id            Int             @id @default(autoincrement())
+  name          String
+  accountid     Int
+  account       Accounts        @relation(fields: [accountid], references: [id])
+  description   String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  Subcategories Subcategories[]
+  Classes       Classes[]
+  Subclasses    Subclasses[]
+  Products      Products[]
+}
+
+model Subcategories {
+  id          Int          @id @default(autoincrement())
+  name        String
+  accountid   Int
+  account     Accounts     @relation(fields: [accountid], references: [id])
+  description String?
+  categoryid  Int
+  category    Categories   @relation(fields: [categoryid], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  Classes     Classes[]
+  Subclasses  Subclasses[]
+  Products    Products[]
+}
+
+model Classes {
+  id            Int           @id @default(autoincrement())
+  name          String
+  accountid     Int
+  account       Accounts      @relation(fields: [accountid], references: [id])
+  categoryid    Int
+  category      Categories    @relation(fields: [categoryid], references: [id])
+  subcategoryid Int
+  subcategory   Subcategories @relation(fields: [subcategoryid], references: [id])
+  description   String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  Subclasses    Subclasses[]
+  Products      Products[]
+}
+
+model Subclasses {
+  id            Int           @id @default(autoincrement())
+  name          String
+  accountid     Int
+  account       Accounts      @relation(fields: [accountid], references: [id])
+  categoryid    Int
+  category      Categories    @relation(fields: [categoryid], references: [id])
+  subcategoryid Int
+  subcategory   Subcategories @relation(fields: [subcategoryid], references: [id])
+  classid       Int
+  class         Classes       @relation(fields: [classid], references: [id])
+  description   String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  Products      Products[]
+}
+
+model Competitors {
+  id               Int                @id @default(autoincrement())
+  name             String
+  accountid        Int
+  account          Accounts           @relation(fields: [accountid], references: [id])
+  description      String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  CompetitorBrands CompetitorBrands[]
+}
+
+model CompetitorBrands {
+  id              Int         @id @default(autoincrement())
+  name            String
+  accountid       Int
+  account         Accounts    @relation(fields: [accountid], references: [id])
+  competitorid    Int
+  competitor      Competitors @relation(fields: [competitorid], references: [id])
+  competitorlevel Int
+  linkedbrandid   Int?
+  linkedbrand     Brands?     @relation(fields: [linkedbrandid], references: [id])
+  description     String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model Products {
+  id            Int            @id @default(autoincrement())
+  name          String
+  accountid     Int
+  account       Accounts       @relation(fields: [accountid], references: [id])
+  description   String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  categoryid    Int?
+  category      Categories?    @relation(fields: [categoryid], references: [id])
+  subcategoryid Int?
+  subcategory   Subcategories? @relation(fields: [subcategoryid], references: [id])
+  classid       Int?
+  class         Classes?       @relation(fields: [classid], references: [id])
+  subclassid    Int?
+  subclass      Subclasses?    @relation(fields: [subclassid], references: [id])
+  brandid       Int?
+  brand         Brands?        @relation(fields: [brandid], references: [id])
+  supplierid    Int?
+  supplier      Suppliers?     @relation(fields: [supplierid], references: [id])
 }

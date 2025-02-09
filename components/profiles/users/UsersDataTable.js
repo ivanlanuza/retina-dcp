@@ -133,7 +133,7 @@ export default function UsersDataTable({ userdata, rolelist, onSave }) {
             <Plus className="mr-2 h-4 w-4" /> Add New
           </Button>
           <CSVLink data={filteredData} filename={"users_download.csv"}>
-            //we can still remove some columns and spead other columns
+            {/*we can still remove some columns and spead other columns*/}
             <Button>
               <Download className="mr-2 h-4 w-4" /> Download List
             </Button>
