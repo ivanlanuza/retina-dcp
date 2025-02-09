@@ -31,6 +31,7 @@ model Accounts {
   createdById      Int?
   updatedBy        Users?             @relation("AccountUpdatedBy", fields: [updatedById], references: [id])
   updatedById      Int?
+  isdeleted        Boolean            @default(false)
   users            Users[]
   roles            Roles[]
   locations        Locations[]
@@ -77,6 +78,7 @@ model Users {
   createdById          Int?
   updatedBy            Users?          @relation("UserUpdatedBy", fields: [updatedById], references: [id])
   updatedById          Int?
+  isdeleted            Boolean         @default(false)
   createdAccounts      Accounts[]      @relation("AccountCreatedBy")
   updatedAccounts      Accounts[]      @relation("AccountUpdatedBy")
   createdRoles         Roles[]         @relation("RoleCreatedBy")
@@ -106,6 +108,7 @@ model Roles {
   createdById Int?
   updatedBy   Users?   @relation("RoleUpdatedBy", fields: [updatedById], references: [id])
   updatedById Int?
+  isdeleted   Boolean  @default(false)
   users       Users[]
 }
 
@@ -124,6 +127,7 @@ model Locations {
   updatedById    Int?
   customerid     Int?
   customer       Customers?      @relation(fields: [customerid], references: [id])
+  isdeleted      Boolean         @default(false)
   userLocations  UserLocations[]
   taggedForms    Forms[]         @relation("FormTaggedLocations")
 }
@@ -142,6 +146,7 @@ model UserLocations {
   createdById Int?
   updatedBy   Users?    @relation("UserLocationUpdatedBy", fields: [updatedById], references: [id])
   updatedById Int?
+  isdeleted   Boolean   @default(false)
 }
 
 model Forms {
@@ -151,6 +156,7 @@ model Forms {
   frequency       FrequencyTypes
   userId          Int
   user            Users          @relation(fields: [userId], references: [id])
+  isdeleted       Boolean        @default(false)
   questions       Questions[]
   submissions     Submissions[]
   taggedUsers     Users[]        @relation("FormTaggedUsers")
@@ -173,6 +179,7 @@ model Questions {
   order      Int
   formId     Int
   form       Forms           @relation(fields: [formId], references: [id])
+  isdeleted  Boolean         @default(false)
   options    AnswerOptions[]
   answers    Answers[]
 }
@@ -194,6 +201,7 @@ model AnswerOptions {
   order      Int
   questionId Int
   question   Questions @relation(fields: [questionId], references: [id])
+  isdeleted  Boolean   @default(false)
 }
 
 model Submissions {
@@ -202,6 +210,7 @@ model Submissions {
   form      Forms     @relation(fields: [formId], references: [id])
   userId    Int?
   user      Users?    @relation(fields: [userId], references: [id], name: "UserSubmissions")
+  isdeleted Boolean   @default(false)
   answers   Answers[]
   createdAt DateTime  @default(now())
 }
@@ -213,6 +222,7 @@ model Answers {
   submission   Submissions @relation(fields: [submissionId], references: [id])
   questionId   Int
   question     Questions   @relation(fields: [questionId], references: [id])
+  isdeleted    Boolean     @default(false)
 }
 
 model Agencies {
@@ -223,6 +233,7 @@ model Agencies {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  isdeleted   Boolean  @default(false)
   Users       Users[]
 }
 
@@ -234,6 +245,7 @@ model Teams {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  isdeleted   Boolean  @default(false)
   Users       Users[]
 }
 
@@ -245,6 +257,7 @@ model Customers {
   description String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+  isdeleted   Boolean     @default(false)
   Locations   Locations[]
 }
 
@@ -256,6 +269,7 @@ model Suppliers {
   description String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+  isdeleted   Boolean    @default(false)
   Products    Products[]
 }
 
@@ -267,6 +281,7 @@ model Brands {
   description      String?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
+  isdeleted        Boolean            @default(false)
   CompetitorBrands CompetitorBrands[]
   Products         Products[]
 }
@@ -279,6 +294,7 @@ model Categories {
   description   String?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
+  isdeleted     Boolean         @default(false)
   Subcategories Subcategories[]
   Classes       Classes[]
   Subclasses    Subclasses[]
@@ -295,6 +311,7 @@ model Subcategories {
   category    Categories   @relation(fields: [categoryid], references: [id])
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  isdeleted   Boolean      @default(false)
   Classes     Classes[]
   Subclasses  Subclasses[]
   Products    Products[]
@@ -312,6 +329,7 @@ model Classes {
   description   String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  isdeleted     Boolean       @default(false)
   Subclasses    Subclasses[]
   Products      Products[]
 }
@@ -330,6 +348,7 @@ model Subclasses {
   description   String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  isdeleted     Boolean       @default(false)
   Products      Products[]
 }
 
@@ -341,6 +360,7 @@ model Competitors {
   description      String?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
+  isdeleted        Boolean            @default(false)
   CompetitorBrands CompetitorBrands[]
 }
 
@@ -357,6 +377,7 @@ model CompetitorBrands {
   description     String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+  isdeleted       Boolean     @default(false)
 }
 
 model Products {
@@ -379,6 +400,7 @@ model Products {
   brand         Brands?        @relation(fields: [brandid], references: [id])
   supplierid    Int?
   supplier      Suppliers?     @relation(fields: [supplierid], references: [id])
+  isdeleted     Boolean        @default(false)
 }
 
 model News {
@@ -392,6 +414,7 @@ model News {
   ispublished Boolean        @default(false)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+  isdeleted   Boolean        @default(false)
   NewsUsers   NewsUsers[]
 }
 
@@ -409,6 +432,7 @@ model NewsUsers {
   userid    Int
   user      Users      @relation(fields: [userid], references: [id])
   status    NewsStatus
+  isdeleted Boolean    @default(false)
 }
 
 enum NewsStatus {
