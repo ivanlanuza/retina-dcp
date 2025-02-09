@@ -1,41 +1,37 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { validateToken } from "../../../utils/backend/middleware";
-import { SystemResponse } from "../../../utils/backend/response";  
-
-const prisma = new PrismaClient();
-const response = new SystemResponse();
+import { jwtDecode } from "jwt-decode";
+import bcrypt from "bcrypt";
 
 export default async function handler(req, res) {
   const isTokenValid = validateToken(req, res);
   if (!isTokenValid) return;
 
-  if (req.method === 'POST') {
+  const accountid = jwtDecode(
+    req.headers.authorization.split(" ")[1]
+  ).accountId;
+
+  if (req.method === "POST") {
+    if (!req.body.username || !req.body.password || !req.body.role)
+      return res.status(400).json({ message: "Required parameter missing" });
+
+    const data = {
+      accountId: accountid,
+      username: req.body.username,
+      password: await bcrypt.hash(req.body.password, 12),
+      status: req.body.status ? "ACTIVE" : "INACTIVE",
+      roleId: parseInt(req.body.role),
+      tags: req.body.tags,
+      updatedAt: new Date(),
+    };
+
     try {
-      const { users } = req.body;
-
-      if (!users || !Array.isArray(users) || users.length === 0) {
-        return response.getFailedResponse(res, 400, { message: 'Invalid or empty users array' });
-      }
-
-      const createdUsers = await prisma.users.createMany({
-        data: users,
+      await prisma.users.create({
+        data: data,
       });
-
-      return response.getSuccessResponse(res, 201, {
-        message: 'User/s created successfully',
-        data: createdUsers,
-      });
-
+      res.status(200).end();
     } catch (error) {
-      console.error("Error creating users:", error);
-      return response.getFailedResponse(res, 500, {
-        message: 'Error creating users',
-        error: error.message,
-      });
+      res.status(500).json({ error: "Error creating user" });
     }
-  } else {
-    return response.getFailedResponse(res, 405, {
-      message: 'Method Not Allowed',
-    });
   }
 }
