@@ -10,9 +10,9 @@ export default async function handler(req, res) {
   const isTokenValid = validateToken(req, res);
   if (!isTokenValid) return;
 
-  const accountid = jwtDecode(
-    req.headers.authorization.split(" ")[1]
-  ).accountId;
+  const accountid = parseInt(
+    jwtDecode(req.headers.authorization.split(" ")[1]).accountId
+  );
 
   if (req.method === "GET") {
     try {
