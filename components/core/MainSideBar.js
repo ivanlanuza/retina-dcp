@@ -62,16 +62,16 @@ export function MainSideBar({ companyinitials }) {
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
-                onClick={() => router.push({ pathname: "/tools/dtr" })}
+                onClick={() => router.push({ pathname: "/tools/surveys" })}
               >
-                Daily Time Records
+                Surveys
               </Button>
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
-                onClick={() => router.push({ pathname: "/tools/surveys" })}
+                onClick={() => router.push({ pathname: "/tools/news" })}
               >
-                Surveys
+                News
               </Button>
               <Button
                 variant="ghost"
@@ -95,8 +95,9 @@ export function MainSideBar({ companyinitials }) {
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
+                onClick={() => router.push({ pathname: "/tools/dtr" })}
               >
-                Reports
+                Daily Time Records
               </Button>
             </CollapsibleContent>
           </Collapsible>
@@ -128,7 +129,7 @@ export function MainSideBar({ companyinitials }) {
                 variant="ghost"
                 className="w-full justify-start font-light"
               >
-                Client Accounts
+                Customers
               </Button>
               <Button
                 variant="ghost"
@@ -147,12 +148,6 @@ export function MainSideBar({ companyinitials }) {
                 className="w-full justify-start font-light"
               >
                 Agencies
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start font-light"
-              >
-                Teams
               </Button>
               <Button
                 variant="ghost"
@@ -200,6 +195,12 @@ export function MainSideBar({ companyinitials }) {
                 }
               >
                 Users
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start font-light"
+              >
+                Teams
               </Button>
               <Button
                 variant="ghost"

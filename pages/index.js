@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { Sprout } from "lucide-react";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -38,9 +39,30 @@ export default function Login() {
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm bg-gray-50 rounded-md border border-gray-300 p-6">
-        <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900 mb-12">
-          Retina Data Collector
-        </h2>
+        <div className="mt-10 mb-12 text-center w-full items-center">
+          <div className="item-center text-center flex justify-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#5349df"
+              stroke-width="1.25"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-sprout"
+            >
+              <path d="M7 20h10" />
+              <path d="M10 20c5.5-2.5.8-6.4 3-10" />
+              <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z" />
+              <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z" />
+            </svg>
+          </div>
+          <h2 className="text-indigo-600 text-4xl/9 font-bold tracking-tight">
+            seeds
+          </h2>
+        </div>
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label
