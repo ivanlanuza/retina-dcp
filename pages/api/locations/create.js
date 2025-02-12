@@ -28,14 +28,16 @@ export default async function handler(req, res) {
     //   }
     // }
 
+    console.log("PAYLOAD: "+JSON.stringify(req.body))
+    console.log("PRISMA:", Object.keys(prisma));
     const locations = data.map(({ account, createdBy, ...rest }) => ({
       ...rest,
       createdAt: new Date(),
-      createdById: createdBy || null,
+      createdById: createdBy || undefined,
     }));
 
     // Perform the database operation to create the locations
-    const result = await prisma.location.createMany({
+    const result = await prisma.locations.createMany({
       data: locations,
       skipDuplicates: true,
     });

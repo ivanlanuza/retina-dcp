@@ -14,7 +14,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const locations = await prisma.location.findMany({
+
+    console.log("PRISMA:", Object.keys(prisma));
+    const locations = await prisma.locations.findMany({
       include: {
         account: true,
         createdBy: true,
