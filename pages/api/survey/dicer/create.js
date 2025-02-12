@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     const { formId, userId, answers } = req.body;
 
     try {
-      const submission = await prisma.submission.create({
+      const submission = await prisma.submissions.create({
         data: {
           formId,
           userId,
