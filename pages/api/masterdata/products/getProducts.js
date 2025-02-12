@@ -1,19 +1,48 @@
-import prisma from "@/lib/prisma";
+import { SystemResponse } from "../../../../utils/backend/response";
+import { validateToken } from "../../../../utils/backend/middleware";
+import { PrismaClient } from "@prisma/client";
+import { jwtDecode } from "jwt-decode";
+
+const prisma = new PrismaClient();
+const response = new SystemResponse();
 
 export default async function handler(req, res) {
+  const isTokenValid = validateToken(req, res);
+  if (!isTokenValid) return;
+
+  const accountid = parseInt(
+    jwtDecode(req.headers.authorization.split(" ")[1]).accountId
+  );
+
   if (req.method === "GET") {
     try {
-      // Fetch all products from the database
-      const products = await prisma.products.findMany();
+      const products = await prisma.products.findMany({
+        include: {
+          account: true,
+          category: true,
+          subcategory: true,
+          class: true,
+          subclass: true,
+          brand: true,
+          supplier: true,
+        },
+        where: {
+          accountid: accountid,
+          isdeleted: false,
+        },
+      });
 
-      // Return the products as a JSON response
       res.status(200).json(products);
     } catch (error) {
-      // Handle any errors that occur
-      res.status(500).json({ error: "Error fetching products", details: error.message });
+      console.error(error);
+      return response.getFailedResponse(res, 500, {
+        message: "Error retrieving products",
+        error: error.message,
+      });
     }
   } else {
-    // Return a 405 Method Not Allowed error for non-GET requests
-    res.status(405).json({ error: "Method not allowed" });
+    return response.getFailedResponse(res, 405, {
+      message: "Method Not Allowed",
+    });
   }
 }
