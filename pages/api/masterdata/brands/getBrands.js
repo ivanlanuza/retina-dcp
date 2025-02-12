@@ -18,9 +18,9 @@ export default async function handler(req, res) {
     try {
       const brands = await prisma.brands.findMany({
         include: {
-          account: true, // Fetch associated account details
-          CompetitorBrands: true, // Fetch associated competitor brands
-          Products: true, // Fetch associated products
+          account: true,
+          CompetitorBrands: true,
+          Products: true,
         },
         where: {
           accountid: accountid, // Filter by account ID

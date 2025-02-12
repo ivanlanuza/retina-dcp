@@ -11,6 +11,10 @@ export default async function handler(req, res) {
     if (id) {
       const customer = await prisma.customers.findUnique({
         where: { id: parseInt(id) },
+        include: {
+            account: true,
+            Locations: true
+        }
       });
 
       if (!customer) {
@@ -21,7 +25,7 @@ export default async function handler(req, res) {
     }
 
     const customers = await prisma.customers.findMany({
-      where: { isdeleted: false },
+      where: { isdeleted: false }
     });
 
     res.status(200).json(customers);

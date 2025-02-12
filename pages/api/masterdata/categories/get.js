@@ -11,6 +11,13 @@ export default async function handler(req, res) {
     if (id) {
       const category = await prisma.categories.findUnique({
         where: { id: parseInt(id) },
+        include: {
+            account: true,
+            Subcategories: true,
+            Classes: true,
+            Subclasses: true,
+            Products: true,
+          },
       });
 
       if (!category) {

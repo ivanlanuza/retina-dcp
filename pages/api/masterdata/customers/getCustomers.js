@@ -18,12 +18,12 @@ export default async function handler(req, res) {
     try {
       const customers = await prisma.customers.findMany({
         include: {
-          account: true, // Fetch associated account details
-          Locations: true, // Fetch associated locations
+          account: true,
+          Locations: true,
         },
         where: {
-          accountid: accountid, // Filter by account ID
-          isdeleted: false, // Exclude soft-deleted records
+          accountid: accountid,
+          isdeleted: false,
         },
       });
 

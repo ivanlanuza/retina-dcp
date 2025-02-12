@@ -18,12 +18,12 @@ export default async function handler(req, res) {
     try {
       const competitors = await prisma.competitors.findMany({
         include: {
-          account: true, // Fetch associated account details
-          CompetitorBrands: true, // Fetch associated competitor brands
+          account: true,
+          CompetitorBrands: true,
         },
         where: {
-          accountid: accountid, // Filter by account ID
-          isdeleted: false, // Exclude soft-deleted records
+          accountid: accountid,
+          isdeleted: false,
         },
       });
 

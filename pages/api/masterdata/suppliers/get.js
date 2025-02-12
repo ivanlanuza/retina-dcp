@@ -11,6 +11,10 @@ export default async function handler(req, res) {
     if (id) {
       const supplier = await prisma.suppliers.findUnique({
         where: { id: parseInt(id) },
+        include: {
+            account: true,
+            Products: true
+        }
       });
 
       if (!supplier) {

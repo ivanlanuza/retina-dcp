@@ -11,6 +11,10 @@ export default async function handler(req, res) {
     if (id) {
       const team = await prisma.teams.findUnique({
         where: { id: parseInt(id) },
+        include: {
+            account: true,
+            Users: true
+        }
       });
 
       if (!team) {

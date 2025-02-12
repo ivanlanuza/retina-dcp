@@ -18,15 +18,15 @@ export default async function handler(req, res) {
     try {
       const classes = await prisma.classes.findMany({
         include: {
-          account: true, // Fetch associated account details
-          category: true, // Fetch related category
-          subcategory: true, // Fetch related subcategory
-          Subclasses: true, // Fetch related subclasses
-          Products: true, // Fetch associated products
+          account: true,
+          category: true,
+          subcategory: true,
+          Subclasses: true,
+          Products: true,
         },
         where: {
-          accountid: accountid, // Filter by account ID
-          isdeleted: false, // Exclude soft-deleted records
+          accountid: accountid,
+          isdeleted: false,
         },
       });
 

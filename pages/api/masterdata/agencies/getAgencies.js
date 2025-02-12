@@ -18,12 +18,12 @@ export default async function handler(req, res) {
     try {
       const agencies = await prisma.agencies.findMany({
         include: {
-          account: true, // Fetch associated account details
-          Users: true, // Fetch associated users
+          account: true,
+          Users: true,
         },
         where: {
-          accountid: accountid, // Filter by account ID
-          isdeleted: false, // Exclude soft-deleted records
+          accountid: accountid,
+          isdeleted: false,
         },
       });
 
