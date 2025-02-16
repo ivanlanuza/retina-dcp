@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     const { title, description, frequency, userId, questions, taggedUserIds, taggedLocationIds } = req.body;
 
     try {
-      const survey = await prisma.form.create({
+      const survey = await prisma.forms.create({
         data: {
           title,
           description,
