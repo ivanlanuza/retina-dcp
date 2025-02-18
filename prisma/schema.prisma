@@ -50,6 +50,8 @@ model Accounts {
   Products         Products[]
   News             News[]
   NewsUsers        NewsUsers[]
+  Surveys          Surveys[]
+  SurveyQuestions  SurveyQuestions[]
 }
 
 model Users {
@@ -95,6 +97,7 @@ model Users {
   taggedForms          Forms[]         @relation("FormTaggedUsers")
   Users                Users[]         @relation("UserManager")
   NewsUsers            NewsUsers[]
+  Surveys              Surveys[]
 }
 
 model Roles {
@@ -439,4 +442,41 @@ enum NewsStatus {
   SENT
   OPENED
   READ
+}
+
+model Surveys {
+  id              Int               @id @default(autoincrement())
+  title           String
+  description     String?
+  allowMultiple   Boolean           @default(false)
+  openFrom        DateTime?
+  openUntil       DateTime?
+  status          String
+  scopeType       String
+  userId          Int
+  user            Users             @relation(fields: [userId], references: [id])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  isdeleted       Boolean           @default(false)
+  accountId       Int
+  account         Accounts          @relation(fields: [accountId], references: [id])
+  SurveyQuestions SurveyQuestions[]
+}
+
+model SurveyQuestions {
+  id          Int      @id @default(autoincrement())
+  surveyId    Int
+  survey      Surveys  @relation(fields: [surveyId], references: [id])
+  question    String?
+  type        String?
+  options     String?  @db.LongText
+  externalid  Int?
+  sortOrder   Int?
+  isMandatory Boolean  @default(false)
+  geofence    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isdeleted   Boolean  @default(false)
+  accountId   Int
+  account     Accounts @relation(fields: [accountId], references: [id])
 }
