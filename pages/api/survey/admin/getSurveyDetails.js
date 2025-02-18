@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   );
 
   if (req.method === "GET") {
-    if (!req.body.id)
+    if (!req.query.id)
       return res.status(400).json({ message: "Required parameter missing" });
 
     try {
@@ -24,7 +24,7 @@ export default async function handler(req, res) {
           SurveyQuestions: true,
         },
         where: {
-          id: parseInt(req.body.id),
+          id: parseInt(req.query.id),
           accountId: accountid,
           isdeleted: false,
         },
