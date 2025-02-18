@@ -1,5 +1,5 @@
-import { SystemResponse } from "../../../utils/backend/response";
-import { validateToken } from "../../../utils/backend/middleware";
+import { validateToken } from "@/utils/backend/middleware";
+import { SystemResponse } from "@/utils/backend/response";
 import { PrismaClient } from "@prisma/client";
 import { jwtDecode } from "jwt-decode";
 
