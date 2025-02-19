@@ -16,16 +16,16 @@ export default async function handler(req, res) {
     const { id } = req.body;
 
     if (!id) {
-      return response.getFailedResponse(res, 400, { message: "Agency ID is required" });
+      return response.getFailedResponse(res, 400, { message: "Location ID is required" });
     }
 
-    await prisma.agencies.update({
-      where: { id: parseInt(id) },
+    const location = await prisma.locations.update({
+      where: { id },
       data: { isdeleted: true },
     });
 
-    return response.getSuccessResponse(res, 200, { message: "Agency deleted successfully" });
+    return response.getSuccessResponse(res, 200, { message: "Location deleted successfully", location });
   } catch (error) {
-    return response.getFailedResponse(res, 500, { message: "Error deleting agency", details: error.message });
+    return response.getFailedResponse(res, 500, { message: "Error deleting location", details: error.message });
   }
 }

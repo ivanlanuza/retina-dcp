@@ -1,15 +1,22 @@
+import { SystemResponse } from "@/utils/backend/response";
+import { validateToken } from "@/utils/backend/middleware";
 import prisma from "@/lib/prisma";
 
+const response = new SystemResponse();
+
 export default async function handler(req, res) {
+  const isTokenValid = await validateToken(req, res);
+  if (!isTokenValid) return;
+
   if (req.method !== "DELETE") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
   }
 
   try {
     const { id } = req.body;
 
     if (!id) {
-      return res.status(400).json({ error: "Subclass ID is required" });
+      return response.getFailedResponse(res, 400, { message: "Subclass ID is required" });
     }
 
     await prisma.subclasses.update({
@@ -17,8 +24,8 @@ export default async function handler(req, res) {
       data: { isdeleted: true },
     });
 
-    res.status(200).json({ message: "Subclass deleted successfully" });
+    return response.getSuccessResponse(res, 200, { message: "Subclass deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Error deleting subclass", details: error.message });
+    return response.getFailedResponse(res, 500, { message: "Error deleting subclass", error: error.message });
   }
 }

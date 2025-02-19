@@ -1,15 +1,22 @@
+import { SystemResponse } from "@/utils/backend/response";
+import { validateToken } from "@/utils/backend/middleware";
 import prisma from "@/lib/prisma";
 
+const response = new SystemResponse();
+
 export default async function handler(req, res) {
+  const isTokenValid = await validateToken(req, res);
+  if (!isTokenValid) return;
+
   if (req.method !== "PUT") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
   }
 
   try {
     const { id, checkIn, checkOut, location } = req.body;
 
     if (!id) {
-      return res.status(400).json({ error: "DTR ID is required" });
+      return response.getFailedResponse(res, 400, { message: "DTR ID is required" });
     }
 
     const dtr = await prisma.dTR.update({
@@ -21,8 +28,8 @@ export default async function handler(req, res) {
       },
     });
 
-    res.status(200).json(dtr);
+    return response.getSuccessResponse(res, 200, dtr);
   } catch (error) {
-    res.status(500).json({ error: "Error updating DTR", details: error.message });
+    return response.getFailedResponse(res, 500, { message: "Error updating DTR", error: error.message });
   }
 }
