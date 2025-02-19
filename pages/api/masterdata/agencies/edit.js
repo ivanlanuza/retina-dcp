@@ -1,15 +1,22 @@
 import prisma from "@/lib/prisma";
+import { validateToken } from "@/utils/backend/middleware";
+import { SystemResponse } from "@/utils/backend/response";
+
+const response = new SystemResponse();
 
 export default async function handler(req, res) {
+  const isTokenValid = validateToken(req, res);
+  if (!isTokenValid) return;
+
   if (req.method !== "PUT") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
   }
 
   try {
     const { id, name, description } = req.body;
 
     if (!id) {
-      return res.status(400).json({ error: "Agency ID is required" });
+      return response.getFailedResponse(res, 400, { message: "Agency ID is required" });
     }
 
     const agency = await prisma.agencies.update({
@@ -17,8 +24,8 @@ export default async function handler(req, res) {
       data: { name, description },
     });
 
-    res.status(200).json(agency);
+    return response.getSuccessResponse(res, 200, { agency });
   } catch (error) {
-    res.status(500).json({ error: "Error updating agency", details: error.message });
+    return response.getFailedResponse(res, 500, { message: "Error updating agency", details: error.message });
   }
 }

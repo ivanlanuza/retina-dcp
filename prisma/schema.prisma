@@ -493,6 +493,4 @@ model DTR {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   isdeleted Boolean   @default(false)
-
-  @@unique([userId, date])
 }

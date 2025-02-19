@@ -1,8 +1,15 @@
+import { SystemResponse } from "@/utils/backend/response";
+import { validateToken } from "@/utils/backend/middleware";
 import prisma from "@/lib/prisma";
 
+const response = new SystemResponse();
+
 export default async function handler(req, res) {
+  const isTokenValid = await validateToken(req, res);
+  if (!isTokenValid) return;
+
   if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
   }
 
   try {
@@ -18,18 +25,18 @@ export default async function handler(req, res) {
       });
 
       if (!competitor) {
-        return res.status(404).json({ error: "Competitor not found" });
+        return response.getFailedResponse(res, 404, { message: "Competitor not found" });
       }
 
-      return res.status(200).json(competitor);
+      return response.getSuccessResponse(res, 200, { competitor });
     }
 
     const competitors = await prisma.competitors.findMany({
       where: { isdeleted: false },
     });
 
-    res.status(200).json(competitors);
+    return response.getSuccessResponse(res, 200, { competitors });
   } catch (error) {
-    res.status(500).json({ error: "Error fetching competitors", details: error.message });
+    return response.getFailedResponse(res, 500, { message: "Error fetching competitors", error: error.message });
   }
 }

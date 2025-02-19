@@ -1,8 +1,15 @@
+import { SystemResponse } from "@/utils/backend/response";
+import { validateToken } from "@/utils/backend/middleware";
 import prisma from "@/lib/prisma";
 
+const response = new SystemResponse();
+
 export default async function handler(req, res) {
+  const isTokenValid = await validateToken(req, res);
+  if (!isTokenValid) return;
+
   if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
   }
 
   try {
@@ -15,10 +22,10 @@ export default async function handler(req, res) {
       });
 
       if (!dtr) {
-        return res.status(404).json({ error: "DTR not found" });
+        return response.getFailedResponse(res, 404, { message: "DTR not found" });
       }
 
-      return res.status(200).json(dtr);
+      return response.getSuccessResponse(res, 200, dtr);
     }
 
     const whereCondition = {};
@@ -30,8 +37,8 @@ export default async function handler(req, res) {
       include: { user: true },
     });
 
-    res.status(200).json(dtrs);
+    return response.getSuccessResponse(res, 200, dtrs);
   } catch (error) {
-    res.status(500).json({ error: "Error fetching DTRs", details: error.message });
+    return response.getFailedResponse(res, 500, { message: "Error fetching DTRs", error: error.message });
   }
 }
