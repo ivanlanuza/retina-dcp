@@ -21,11 +21,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import DeleteModal from "../../core/DeleteModal";
-import EditViewSidebar from "@/components/profiles/users/EditViewSidebar";
-import AddEntrySidebar from "@/components/profiles/users/AddEntrySidebar";
-import AssignLocationsSidebar from "@/components/profiles/users/AssignLocationsSidebar";
+
 import { useEffect } from "react";
+import DeleteModal from "../../core/DeleteModal";
+import SurveyDataView from "./SurveyDataView";
+
 
 export default function SurveyDataTable({ surveydata, onSave }) {
   const [data, setData] = useState(surveydata);
@@ -38,14 +38,10 @@ export default function SurveyDataTable({ surveydata, onSave }) {
   const [editViewSidebar, setEditViewSidebar] = useState({
     open: false,
     mode: "view",
-    user: null,
+    surveyid: null,
   });
-  const [addEntrySidebar, setAddEntrySidebar] = useState(false);
   const [deleteModal, setDeleteModal] = useState({ open: false, user: null });
-  const [assignLocationsSidebar, setAssignLocationsSidebar] = useState({
-    open: false,
-    user: null,
-  });
+
 
   const filteredData = useMemo(() => {
     return data.filter((user) =>
@@ -85,7 +81,8 @@ export default function SurveyDataTable({ surveydata, onSave }) {
   };
 
   const handleView = (survey) => {
-    setEditViewSidebar({ open: true, mode: "view", survey });
+
+    setEditViewSidebar({ open: true, mode: "view", surveyid: survey });
   };
 
   const handleDelete = (survey) => {
@@ -96,10 +93,11 @@ export default function SurveyDataTable({ surveydata, onSave }) {
     if (deleteModal.survey) {
       const token = localStorage.getItem("token");
       let datapass = JSON.stringify({
-        id: deleteModal.survey.id,
+
+        surveyid: deleteModal.survey.id,
       });
 
-      const response = await fetch("/api/survey/admin/deleteSurvey", {
+      const response = await fetch("/api/survey/admin/delete", {
         body: datapass,
         headers: {
           "Content-Type": "application/json",
@@ -183,7 +181,7 @@ export default function SurveyDataTable({ surveydata, onSave }) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleView(item)}
+                    onClick={() => handleView(item.id)}
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
@@ -232,6 +230,14 @@ export default function SurveyDataTable({ surveydata, onSave }) {
           </Button>
         </div>
       </div>
+
+
+      <SurveyDataView
+        open={editViewSidebar.mode}
+        mode={editViewSidebar.mode}
+        surveyid={editViewSidebar.surveyid}
+        onClose={() => setEditViewSidebar({ open: false })}
+      />
 
       <DeleteModal
         open={deleteModal.open}
