@@ -1,37 +1,35 @@
-import { PrismaClient } from '@prisma/client';
-import { validateToken } from "../../../utils/backend/middleware";
-import { SystemResponse } from "../../../utils/backend/response";
+import prisma from "@/lib/prisma";
+import { validateToken } from "@/utils/backend/middleware";
+import { SystemResponse } from "@/utils/backend/response";
 
-const prisma = new PrismaClient();
 const response = new SystemResponse();
 
 export default async function handler(req, res) {
   const isTokenValid = validateToken(req, res);
   if (!isTokenValid) return;
 
-  if (req.method !== 'POST') {
-    return response.getFailedResponse(res, 405, { error: 'Method Not Allowed' });
-  }
-
-  if (!req.body || !req.body.userLocations) {
-    return response.getFailedResponse(res, 400, { error: 'Invalid payload, userLocations array is required' });
+  if (req.method !== "POST") {
+    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
   }
 
   try {
-    const { userLocations } = req.body;
+    const { accountId, userId, locationId, createdById } = req.body;
 
-    if (!Array.isArray(userLocations)) {
-      return response.getFailedResponse(res, 400, { error: 'userLocations must be an array' });
+    if (!accountId || !userId || !locationId) {
+      return response.getFailedResponse(res, 400, { message: "Account ID, User ID, and Location ID are required" });
     }
 
-    const createdRecords = await prisma.userLocations.createMany({
-      data: userLocations,
-      skipDuplicates: true,
+    const userLocation = await prisma.userLocations.create({
+      data: {
+        accountId,
+        userId,
+        locationId,
+        createdById: createdById || null,
+      },
     });
 
-    return response.getSuccessResponse(res, 201, { message: 'User/s locations added', count: createdRecords.count });
+    return response.getSuccessResponse(res, 201, { userLocation });
   } catch (error) {
-    console.error("Error adding user locations:", error);
-    return response.getFailedResponse(res, 500, { error: 'Internal Server Error' });
+    return response.getFailedResponse(res, 500, { message: "Error creating user location", details: error.message });
   }
 }

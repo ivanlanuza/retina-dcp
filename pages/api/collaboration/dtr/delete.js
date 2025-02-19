@@ -16,16 +16,16 @@ export default async function handler(req, res) {
     const { id } = req.body;
 
     if (!id) {
-      return response.getFailedResponse(res, 400, { message: "Supplier ID is required" });
+      return response.getFailedResponse(res, 400, { message: "DTR ID is required" });
     }
 
-    await prisma.suppliers.update({
+    await prisma.dTR.update({
       where: { id: parseInt(id) },
       data: { isdeleted: true },
     });
 
-    return response.getSuccessResponse(res, 200, { message: "Supplier deleted successfully" });
+    return response.getSuccessResponse(res, 200, { message: "DTR marked as deleted successfully" });
   } catch (error) {
-    return response.getFailedResponse(res, 500, { message: "Error deleting supplier", error: error.message });
+    return response.getFailedResponse(res, 500, { message: "Error marking DTR as deleted", error: error.message });
   }
 }

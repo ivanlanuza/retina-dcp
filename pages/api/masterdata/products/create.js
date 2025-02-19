@@ -1,8 +1,15 @@
+import { SystemResponse } from "@/utils/backend/response";
+import { validateToken } from "@/utils/backend/middleware";
 import prisma from "@/lib/prisma";
 
+const response = new SystemResponse();
+
 export default async function handler(req, res) {
+  const isTokenValid = await validateToken(req, res);
+  if (!isTokenValid) return;
+
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
   }
 
   try {
@@ -12,7 +19,7 @@ export default async function handler(req, res) {
     } = req.body;
 
     if (!name || !accountid) {
-      return res.status(400).json({ error: "Name and Account ID are required" });
+      return response.getFailedResponse(res, 400, { message: "Name and Account ID are required" });
     }
 
     const newProduct = await prisma.products.create({
@@ -29,8 +36,8 @@ export default async function handler(req, res) {
       },
     });
 
-    res.status(201).json(newProduct);
+    return response.getSuccessResponse(res, 201, newProduct);
   } catch (error) {
-    res.status(500).json({ error: "Error creating product", details: error.message });
+    return response.getFailedResponse(res, 500, { message: "Error creating product", error: error.message });
   }
 }

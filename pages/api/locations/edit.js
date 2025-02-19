@@ -8,30 +8,30 @@ export default async function handler(req, res) {
   const isTokenValid = validateToken(req, res);
   if (!isTokenValid) return;
 
-  if (req.method !== "POST") {
-    return response.getFailedResponse(res, 400, { message: "Method not allowed!"});
+  if (req.method !== "PUT") {
+    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
   }
 
   try {
-    const { name, accountId, geocoordinates, tags, createdById, customerid } = req.body;
+    const { id, name, geocoordinates, tags, updatedById, customerid } = req.body;
 
-    if (!name || !accountId) {
-      return response.getFailedResponse(res, 400, { message: "Name and account ID are required" });
+    if (!id) {
+      return response.getFailedResponse(res, 400, { message: "Location ID is required" });
     }
 
-    const location = await prisma.locations.create({
+    const location = await prisma.locations.update({
+      where: { id },
       data: {
         name,
-        accountId,
         geocoordinates: geocoordinates || null,
         tags: tags || null,
-        createdById: createdById || null,
+        updatedById: updatedById || null,
         customerid: customerid || null,
       },
     });
 
     return response.getSuccessResponse(res, 200, { location });
   } catch (error) {
-    return response.getFailedResponse(res, 500, { message: error.message })
+    return response.getFailedResponse(res, 500, { message: "Error updating location", details: error.message });
   }
 }

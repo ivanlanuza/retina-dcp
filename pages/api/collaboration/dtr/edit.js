@@ -13,19 +13,23 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { id, name, competitorlevel, linkedbrandid, description } = req.body;
+    const { id, checkIn, checkOut, location } = req.body;
 
     if (!id) {
-      return response.getFailedResponse(res, 400, { message: "Competitor brand ID is required" });
+      return response.getFailedResponse(res, 400, { message: "DTR ID is required" });
     }
 
-    const updatedCompetitorBrand = await prisma.competitorBrands.update({
+    const dtr = await prisma.dTR.update({
       where: { id: parseInt(id) },
-      data: { name, competitorlevel, linkedbrandid, description },
+      data: {
+        checkIn: checkIn ? new Date(checkIn) : undefined,
+        checkOut: checkOut ? new Date(checkOut) : undefined,
+        location: location || undefined,
+      },
     });
 
-    return response.getSuccessResponse(res, 200, { updatedCompetitorBrand });
+    return response.getSuccessResponse(res, 200, dtr);
   } catch (error) {
-    return response.getFailedResponse(res, 500, { message: "Error updating competitor brand", error: error.message });
+    return response.getFailedResponse(res, 500, { message: "Error updating DTR", error: error.message });
   }
 }

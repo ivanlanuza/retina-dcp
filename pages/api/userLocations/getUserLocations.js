@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
-import { validateToken } from "../../../utils/backend/middleware";
-import { SystemResponse } from "../../../utils/backend/response"; 
+import prisma from "@/lib/prisma";
+import { validateToken } from "@/utils/backend/middleware";
+import { SystemResponse } from "@/utils/backend/response";
 
-const prisma = new PrismaClient();
 const response = new SystemResponse();
 
 export default async function handler(req, res) {
@@ -10,21 +9,20 @@ export default async function handler(req, res) {
   if (!isTokenValid) return;
 
   if (req.method !== "GET") {
-    return response.getFailedResponse(res, 405, { error: "Method Not Allowed" });
+    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
   }
 
   try {
     const userLocations = await prisma.userLocations.findMany({
+      where: { isdeleted: false },
       include: {
-        account: true,
-        createdBy: true,
-        // updatedBy: true,
-        // userLocations: true
+        user: true,
+        location: true,
       },
     });
-    return response.getSuccessResponse(res, 200, { userLocations: userLocations });
+
+    return response.getSuccessResponse(res, 200, { userLocations });
   } catch (error) {
-    console.error("Error fetching user locations:", error);
-    return response.getFailedResponse(res, 500, { error: "Internal Server Error" });
+    return response.getFailedResponse(res, 500, { message: "Error fetching user locations", details: error.message });
   }
 }

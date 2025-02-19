@@ -21,9 +21,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+
 import { useEffect } from "react";
 import DeleteModal from "../../core/DeleteModal";
 import SurveyDataView from "./SurveyDataView";
+
 
 export default function SurveyDataTable({ surveydata, onSave }) {
   const [data, setData] = useState(surveydata);
@@ -39,6 +41,7 @@ export default function SurveyDataTable({ surveydata, onSave }) {
     surveyid: null,
   });
   const [deleteModal, setDeleteModal] = useState({ open: false, user: null });
+
 
   const filteredData = useMemo(() => {
     return data.filter((user) =>
@@ -78,6 +81,7 @@ export default function SurveyDataTable({ surveydata, onSave }) {
   };
 
   const handleView = (survey) => {
+
     setEditViewSidebar({ open: true, mode: "view", surveyid: survey });
   };
 
@@ -89,6 +93,7 @@ export default function SurveyDataTable({ surveydata, onSave }) {
     if (deleteModal.survey) {
       const token = localStorage.getItem("token");
       let datapass = JSON.stringify({
+
         surveyid: deleteModal.survey.id,
       });
 
@@ -225,6 +230,7 @@ export default function SurveyDataTable({ surveydata, onSave }) {
           </Button>
         </div>
       </div>
+
 
       <SurveyDataView
         open={editViewSidebar.mode}

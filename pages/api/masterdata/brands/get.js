@@ -1,8 +1,15 @@
+import { SystemResponse } from "@/utils/backend/response";
+import { validateToken } from "@/utils/backend/middleware";
 import prisma from "@/lib/prisma";
 
+const response = new SystemResponse();
+
 export default async function handler(req, res) {
+  const isTokenValid = await validateToken(req, res);
+  if (!isTokenValid) return;
+
   if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
   }
 
   try {
@@ -12,25 +19,25 @@ export default async function handler(req, res) {
       const brand = await prisma.brands.findUnique({
         where: { id: parseInt(id) },
         include: {
-            account: true, 
-            CompetitorBrands: true, 
-            Products: true,
-          },
+          account: true,
+          CompetitorBrands: true,
+          Products: true,
+        },
       });
 
       if (!brand) {
-        return res.status(404).json({ error: "Brand not found" });
+        return response.getFailedResponse(res, 404, { message: "Brand not found" });
       }
 
-      return res.status(200).json(brand);
+      return response.getSuccessResponse(res, 200, { brand });
     }
 
     const brands = await prisma.brands.findMany({
       where: { isdeleted: false },
     });
 
-    res.status(200).json(brands);
+    return response.getSuccessResponse(res, 200, { brands });
   } catch (error) {
-    res.status(500).json({ error: "Error fetching brands", details: error.message });
+    return response.getFailedResponse(res, 500, { message: "Error fetching brands", error: error.message });
   }
 }

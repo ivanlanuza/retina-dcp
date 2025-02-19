@@ -1,15 +1,22 @@
+import { SystemResponse } from "@/utils/backend/response";
+import { validateToken } from "@/utils/backend/middleware";
 import prisma from "@/lib/prisma";
 
+const response = new SystemResponse();
+
 export default async function handler(req, res) {
+  const isTokenValid = await validateToken(req, res);
+  if (!isTokenValid) return;
+
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
   }
 
   try {
     const { name, accountid, categoryid, subcategoryid, description } = req.body;
 
     if (!name || !accountid || !categoryid || !subcategoryid) {
-      return res.status(400).json({ error: "Name, account ID, category ID, and subcategory ID are required" });
+      return response.getFailedResponse(res, 400, { message: "Name, account ID, category ID, and subcategory ID are required" });
     }
 
     const newClass = await prisma.classes.create({
@@ -22,8 +29,8 @@ export default async function handler(req, res) {
       },
     });
 
-    res.status(201).json(newClass);
+    return response.getSuccessResponse(res, 201, { newClass });
   } catch (error) {
-    res.status(500).json({ error: "Error creating class", details: error.message });
+    return response.getFailedResponse(res, 500, { message: "Error creating class", error: error.message });
   }
 }

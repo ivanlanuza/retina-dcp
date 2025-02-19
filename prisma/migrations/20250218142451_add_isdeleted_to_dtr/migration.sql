@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `DTR` ADD COLUMN `isdeleted` BOOLEAN NOT NULL DEFAULT false;
