@@ -18,7 +18,10 @@ export default async function handler(req, res) {
     if (id) {
       const dtr = await prisma.dTR.findUnique({
         where: { id: parseInt(id) },
-        include: { user: true },
+        include: { 
+            user: true,
+            account: true
+        },
       });
 
       if (!dtr) {
