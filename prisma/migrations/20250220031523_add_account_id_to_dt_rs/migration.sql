@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE `DTR` ADD COLUMN `accountId` INTEGER NULL;
+
+-- AddForeignKey
+ALTER TABLE `DTR` ADD CONSTRAINT `DTR_accountId_fkey` FOREIGN KEY (`accountId`) REFERENCES `Accounts`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
