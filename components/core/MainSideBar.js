@@ -69,16 +69,17 @@ export function MainSideBar({ companyinitials }) {
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
-                onClick={() => router.push({ pathname: "/tools/news" })}
+                onClick={() => router.push({ pathname: "/tools/dtr" })}
               >
-                News
+                Daily Time Records
               </Button>
+
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
-                onClick={() => router.push({ pathname: "/tools/tickets" })}
+                onClick={() => router.push({ pathname: "/tools/news" })}
               >
-                Tickets
+                News
               </Button>
               <Button
                 variant="ghost"
@@ -92,12 +93,13 @@ export function MainSideBar({ companyinitials }) {
               >
                 Checklists
               </Button>
+
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
-                onClick={() => router.push({ pathname: "/tools/dtr" })}
+                onClick={() => router.push({ pathname: "/tools/requests" })}
               >
-                Daily Time Records
+                Requests
               </Button>
             </CollapsibleContent>
           </Collapsible>
@@ -129,7 +131,7 @@ export function MainSideBar({ companyinitials }) {
                 variant="ghost"
                 className="w-full justify-start font-light"
               >
-                Customers
+                Client Accounts
               </Button>
               <Button
                 variant="ghost"

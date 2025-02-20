@@ -1,9 +1,10 @@
 "use client";
 
 import { PAGINATION_LIMIT } from "@/lib/data";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { CSVLink } from "react-csv";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {
   ChevronLeft,
   ChevronRight,
@@ -22,13 +23,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
-import { useEffect } from "react";
 import DeleteModal from "../../core/DeleteModal";
 import SurveyDataView from "./SurveyDataView";
 
+const CSVDownload = dynamic(
+  () => import("react-csv").then((mod) => mod.CSVDownload),
+  { ssr: false }
+);
 
 export default function SurveyDataTable({ surveydata, onSave }) {
   const [data, setData] = useState(surveydata);
+  const [downloaddata, setDownloadData] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const [downloadReady, setDownloadReady] = useState(false);
   const ITEMS_PER_PAGE = PAGINATION_LIMIT;
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,7 +48,6 @@ export default function SurveyDataTable({ surveydata, onSave }) {
     surveyid: null,
   });
   const [deleteModal, setDeleteModal] = useState({ open: false, user: null });
-
 
   const filteredData = useMemo(() => {
     return data.filter((user) =>
@@ -81,7 +87,6 @@ export default function SurveyDataTable({ surveydata, onSave }) {
   };
 
   const handleView = (survey) => {
-
     setEditViewSidebar({ open: true, mode: "view", surveyid: survey });
   };
 
@@ -89,11 +94,52 @@ export default function SurveyDataTable({ surveydata, onSave }) {
     setDeleteModal({ open: true, survey });
   };
 
+  const token = localStorage.getItem("token");
+
+  const handleResponses = async (surveyid) => {
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(
+        "/api/survey/admin/getSurveySubmissions?" +
+          new URLSearchParams({
+            surveyid: parseInt(surveyid),
+          }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) throw new Error("Failed to fetch data");
+
+      const result = await response.json();
+      setDownloadData(result);
+      setDownloadReady(true);
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Reset download state after completion
+  useEffect(() => {
+    if (downloadReady) {
+      const timer = setTimeout(() => {
+        setDownloadReady(false);
+        setDownloadData([]);
+      }, 10000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [downloadReady]);
+
   async function confirmDelete() {
     if (deleteModal.survey) {
       const token = localStorage.getItem("token");
       let datapass = JSON.stringify({
-
         surveyid: deleteModal.survey.id,
       });
 
@@ -187,8 +233,9 @@ export default function SurveyDataTable({ surveydata, onSave }) {
                   </Button>
                   <Button
                     variant="ghost"
+                    disabled={isLoading}
                     size="sm"
-                    onClick={() => handleResponses(item)}
+                    onClick={() => handleResponses(item.id)}
                   >
                     <ListTodo className="h-4 w-4" />
                   </Button>
@@ -231,6 +278,9 @@ export default function SurveyDataTable({ surveydata, onSave }) {
         </div>
       </div>
 
+      {downloadReady && (
+        <CSVDownload data={downloaddata} filename="data.csv"></CSVDownload>
+      )}
 
       <SurveyDataView
         open={editViewSidebar.mode}
