@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { userId, date, checkIn, checkOut, location } = req.body;
+    const { userId, date, checkIn, checkOut, location, accountId } = req.body;
 
     if (!userId || !date) {
       return response.getFailedResponse(res, 400, { message: "User ID and Date are required" });
@@ -26,6 +26,7 @@ export default async function handler(req, res) {
         checkIn: checkIn ? new Date(checkIn) : null,
         checkOut: checkOut ? new Date(checkOut) : null,
         location: location || null,
+        accountId
       },
     });
 
