@@ -35,7 +35,6 @@ model Accounts {
   users             Users[]
   roles             Roles[]
   locations         Locations[]
-  userLocations     UserLocations[]     @relation("UserLocation")
   Agencies          Agencies[]
   Teams             Teams[]
   Customers         Customers[]
@@ -58,51 +57,49 @@ model Accounts {
 }
 
 model Users {
-  id                   Int                 @id @default(autoincrement())
-  account              Accounts            @relation(fields: [accountId], references: [id])
-  accountId            Int
-  username             String              @unique
-  password             String
-  firstname            String?
-  lastname             String?
-  email                String?
-  mobile               String?
-  agencyid             Int?
-  agency               Agencies?           @relation(fields: [agencyid], references: [id])
-  teamid               Int?
-  team                 Teams?              @relation(fields: [teamid], references: [id])
-  managerid            Int?
-  manager              Users?              @relation("UserManager", fields: [managerid], references: [id])
-  status               UserStatus          @default(ACTIVE)
-  role                 Roles               @relation(fields: [roleId], references: [id])
-  roleId               Int
-  tags                 String?
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
-  createdBy            Users?              @relation("UserCreatedBy", fields: [createdById], references: [id])
-  createdById          Int?
-  updatedBy            Users?              @relation("UserUpdatedBy", fields: [updatedById], references: [id])
-  updatedById          Int?
-  isdeleted            Boolean             @default(false)
-  createdAccounts      Accounts[]          @relation("AccountCreatedBy")
-  updatedAccounts      Accounts[]          @relation("AccountUpdatedBy")
-  createdRoles         Roles[]             @relation("RoleCreatedBy")
-  updatedRoles         Roles[]             @relation("RoleUpdatedBy")
-  createdLocations     Locations[]         @relation("LocationCreatedBy")
-  updatedLocations     Locations[]         @relation("LocationUpdatedBy")
-  createdUserLocations UserLocations[]     @relation("UserLocationCreatedBy")
-  updatedUserLocations UserLocations[]     @relation("UserLocationUpdatedBy")
-  userLocations        UserLocations[]
-  CreatedBy            Users[]             @relation("UserCreatedBy")
-  UpdatedBy            Users[]             @relation("UserUpdatedBy")
-  forms                Forms[]
-  submissions          Submissions[]       @relation("UserSubmissions")
-  taggedForms          Forms[]             @relation("FormTaggedUsers")
-  Users                Users[]             @relation("UserManager")
-  NewsUsers            NewsUsers[]
-  Surveys              Surveys[]
-  dtrs                 DTR[]
-  SurveySubmissions    SurveySubmissions[]
+  id                Int                 @id @default(autoincrement())
+  account           Accounts            @relation(fields: [accountId], references: [id])
+  accountId         Int
+  username          String              @unique
+  password          String
+  firstname         String?
+  lastname          String?
+  email             String?
+  mobile            String?
+  agencyid          Int?
+  agency            Agencies?           @relation(fields: [agencyid], references: [id])
+  teamid            Int?
+  team              Teams?              @relation(fields: [teamid], references: [id])
+  managerid         Int?
+  manager           Users?              @relation("UserManager", fields: [managerid], references: [id])
+  status            UserStatus          @default(ACTIVE)
+  role              Roles               @relation(fields: [roleId], references: [id])
+  roleId            Int
+  tags              String?
+  accesslocation    String?             @db.Text
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  createdBy         Users?              @relation("UserCreatedBy", fields: [createdById], references: [id])
+  createdById       Int?
+  updatedBy         Users?              @relation("UserUpdatedBy", fields: [updatedById], references: [id])
+  updatedById       Int?
+  isdeleted         Boolean             @default(false)
+  createdAccounts   Accounts[]          @relation("AccountCreatedBy")
+  updatedAccounts   Accounts[]          @relation("AccountUpdatedBy")
+  createdRoles      Roles[]             @relation("RoleCreatedBy")
+  updatedRoles      Roles[]             @relation("RoleUpdatedBy")
+  createdLocations  Locations[]         @relation("LocationCreatedBy")
+  updatedLocations  Locations[]         @relation("LocationUpdatedBy")
+  CreatedBy         Users[]             @relation("UserCreatedBy")
+  UpdatedBy         Users[]             @relation("UserUpdatedBy")
+  forms             Forms[]
+  submissions       Submissions[]       @relation("UserSubmissions")
+  taggedForms       Forms[]             @relation("FormTaggedUsers")
+  Users             Users[]             @relation("UserManager")
+  NewsUsers         NewsUsers[]
+  Surveys           Surveys[]
+  dtrs              DTR[]
+  SurveySubmissions SurveySubmissions[]
 }
 
 model Roles {
@@ -121,40 +118,22 @@ model Roles {
 }
 
 model Locations {
-  id             Int             @id @default(autoincrement())
-  account        Accounts        @relation(fields: [accountId], references: [id])
+  id             Int        @id @default(autoincrement())
+  account        Accounts   @relation(fields: [accountId], references: [id])
   accountId      Int
   name           String
   geocoordinates String?
   tags           String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  createdBy      Users?          @relation("LocationCreatedBy", fields: [createdById], references: [id])
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  createdBy      Users?     @relation("LocationCreatedBy", fields: [createdById], references: [id])
   createdById    Int?
-  updatedBy      Users?          @relation("LocationUpdatedBy", fields: [updatedById], references: [id])
+  updatedBy      Users?     @relation("LocationUpdatedBy", fields: [updatedById], references: [id])
   updatedById    Int?
   customerid     Int?
-  customer       Customers?      @relation(fields: [customerid], references: [id])
-  isdeleted      Boolean         @default(false)
-  userLocations  UserLocations[]
-  taggedForms    Forms[]         @relation("FormTaggedLocations")
-}
-
-model UserLocations {
-  id          Int       @id @default(autoincrement())
-  account     Accounts  @relation("UserLocation", fields: [accountId], references: [id])
-  accountId   Int
-  user        Users     @relation(fields: [userId], references: [id])
-  userId      Int
-  location    Locations @relation(fields: [locationId], references: [id])
-  locationId  Int
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  createdBy   Users?    @relation("UserLocationCreatedBy", fields: [createdById], references: [id])
-  createdById Int?
-  updatedBy   Users?    @relation("UserLocationUpdatedBy", fields: [updatedById], references: [id])
-  updatedById Int?
-  isdeleted   Boolean   @default(false)
+  customer       Customers? @relation(fields: [customerid], references: [id])
+  isdeleted      Boolean    @default(false)
+  taggedForms    Forms[]    @relation("FormTaggedLocations")
 }
 
 model Forms {
