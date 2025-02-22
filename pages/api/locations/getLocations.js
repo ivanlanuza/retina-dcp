@@ -1,39 +1,43 @@
-import prisma from "@/lib/prisma";
-import { validateToken } from "@/utils/backend/middleware";
-import { SystemResponse } from "@/utils/backend/response";
+import { SystemResponse } from "../../../utils/backend/response";
+import { validateToken } from "../../../utils/backend/middleware";
+import { PrismaClient } from "@prisma/client";
+import { jwtDecode } from "jwt-decode";
 
+const prisma = new PrismaClient();
 const response = new SystemResponse();
 
 export default async function handler(req, res) {
   const isTokenValid = validateToken(req, res);
   if (!isTokenValid) return;
 
-  if (req.method !== "GET") {
-    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
-  }
+  const accountid = parseInt(
+    jwtDecode(req.headers.authorization.split(" ")[1]).accountId
+  );
 
-  try {
-    const { id } = req.query;
-
-    if (id) {
-      const location = await prisma.locations.findUnique({
-        where: { id: parseInt(id) },
-        include: { account: true },
+  if (req.method === "GET") {
+    try {
+      const locations = await prisma.locations.findMany({
+        include: {
+          customer: true,
+        },
+        where: {
+          accountId: accountid,
+          isdeleted: false,
+        },
       });
-
-      if (!location) {
-        return response.getFailedResponse(res, 404, { message: "Location not found" });
-      }
-
-      return response.getSuccessResponse(res, 200, { location });
+      //console.log(locations);
+      res.status(200).json(locations);
+      return;
+    } catch (error) {
+      console.error(error);
+      return response.getFailedResponse(res, 500, {
+        message: "Error retrieving data",
+        error: error.message,
+      });
     }
-
-    const locations = await prisma.locations.findMany({
-      where: { isdeleted: false },
+  } else {
+    return response.getFailedResponse(res, 405, {
+      message: "Method Not Allowed",
     });
-
-    return response.getSuccessResponse(res, 200, { locations });
-  } catch (error) {
-    return response.getFailedResponse(res, 500, { message: "Error fetching locations", details: error.message });
   }
 }

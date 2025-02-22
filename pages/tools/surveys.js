@@ -37,7 +37,7 @@ const App = () => {
 
   return (
     <Layout>
-      <div className="mx-8 font-sans text-sm">
+      <div className="mx-8 font-sans text-xs">
         <h2 className="text-2xl font-bold font-sans text-gray-800 mb-12">
           Surveys
         </h2>

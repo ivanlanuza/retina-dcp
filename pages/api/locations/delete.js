@@ -1,31 +1,32 @@
 import prisma from "@/lib/prisma";
-import { validateToken } from "@/utils/backend/middleware";
-import { SystemResponse } from "@/utils/backend/response";
-
-const response = new SystemResponse();
+import { validateToken } from "../../../utils/backend/middleware";
+import { jwtDecode } from "jwt-decode";
 
 export default async function handler(req, res) {
   const isTokenValid = validateToken(req, res);
   if (!isTokenValid) return;
 
-  if (req.method !== "DELETE") {
-    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
-  }
+  const accountid = parseInt(
+    jwtDecode(req.headers.authorization.split(" ")[1]).accountId
+  );
 
-  try {
-    const { id } = req.body;
+  if (req.method === "PUT") {
+    if (!req.body.id)
+      return res.status(400).json({ message: "Required parameter missing" });
 
-    if (!id) {
-      return response.getFailedResponse(res, 400, { message: "Location ID is required" });
+    try {
+      await prisma.locations.update({
+        data: {
+          isdeleted: true,
+        },
+        where: {
+          id: parseInt(req.body.id),
+          accountId: parseInt(accountid),
+        },
+      });
+      res.status(200).end();
+    } catch (error) {
+      res.status(500).json({ error: "Error deleting user" });
     }
-
-    const location = await prisma.locations.update({
-      where: { id },
-      data: { isdeleted: true },
-    });
-
-    return response.getSuccessResponse(res, 200, { message: "Location deleted successfully", location });
-  } catch (error) {
-    return response.getFailedResponse(res, 500, { message: "Error deleting location", details: error.message });
   }
 }
