@@ -128,7 +128,7 @@ export default function UsersDataTable({ userdata, rolelist, onSave }) {
   };
 
   return (
-    <div className="container mx-auto p-4 font-sans text-gray-900">
+    <div className="container mt-4 font-sans text-gray-900">
       <div className="flex justify-between mb-4">
         <Input
           placeholder="Filter users..."

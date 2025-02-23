@@ -41,8 +41,8 @@ const App = () => {
   if (isLoading || isLoadingRoles) {
     return (
       <Layout>
-        <div className="max-w-4xl mx-auto font-sans">
-          <h2 className="text-2xl font-bold font-sans text-gray-800 mb-6">
+        <div className="mx-8 font-sans text-xs">
+          <h2 className="text-2xl font-bold font-sans text-gray-800 mb-12">
             Users
           </h2>
         </div>
@@ -52,8 +52,8 @@ const App = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold font-sans text-gray-800 mb-6">
+      <div className="mx-8 font-sans text-xs">
+        <h2 className="text-2xl font-bold font-sans text-gray-800 mb-12">
           Users
         </h2>
         {users && (

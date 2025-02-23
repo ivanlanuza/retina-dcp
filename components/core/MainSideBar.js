@@ -130,6 +130,9 @@ export function MainSideBar({ companyinitials }) {
               <Button
                 variant="ghost"
                 className="w-full justify-start font-light"
+                onClick={() =>
+                  router.push({ pathname: "/masterdata/clientaccounts" })
+                }
               >
                 Client Accounts
               </Button>

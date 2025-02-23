@@ -23,6 +23,9 @@ export default async function handler(req, res) {
         where: {
           accountId: accountid,
           isdeleted: false,
+          customer: {
+            isdeleted: false,
+          },
         },
       });
       //console.log(locations);

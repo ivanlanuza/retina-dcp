@@ -25,7 +25,7 @@ import EditViewSidebar from "./EditViewSidebar";
 import AddEntrySidebar from "./AddEntrySidebar";
 import { useEffect } from "react";
 
-export default function LocationsDataTable({ data, customerlist, onSave }) {
+export default function CustomersDataTable({ data, onSave }) {
   //const [data, setData] = useState(locationsdata);
   const ITEMS_PER_PAGE = PAGINATION_LIMIT;
 
@@ -97,7 +97,7 @@ export default function LocationsDataTable({ data, customerlist, onSave }) {
         id: deleteModal.item.id,
       });
 
-      const response = await fetch("/api/locations/delete", {
+      const response = await fetch("/api/masterdata/customers/delete", {
         body: datapass,
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +116,7 @@ export default function LocationsDataTable({ data, customerlist, onSave }) {
     <div className="container mt-4 font-sans text-gray-900">
       <div className="flex justify-between mb-4">
         <Input
-          placeholder="Filter locations..."
+          placeholder="Filter client accounts..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           className="max-w-sm"
@@ -129,7 +129,7 @@ export default function LocationsDataTable({ data, customerlist, onSave }) {
           >
             <Plus className="mr-2 h-4 w-4" /> Add New
           </Button>
-          <CSVLink data={filteredData} filename={"locations_download.csv"}>
+          <CSVLink data={filteredData} filename={"clientaccounts_download.csv"}>
             {/*we can still remove some columns and spead other columns*/}
             <Button>
               <Download className="mr-2 h-4 w-4" /> Download List
@@ -142,13 +142,13 @@ export default function LocationsDataTable({ data, customerlist, onSave }) {
         <table className="min-w-full bg-white">
           <thead>
             <tr>
-              {["name"].map((column) => (
+              {["name", "description"].map((column) => (
                 <th
                   key={column}
                   className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort(column)}
                 >
-                  {column === "customerid" ? "Client Account" : column}
+                  {column}
                   {sortColumn === column &&
                     (sortDirection === "asc" ? (
                       <ArrowUp className="inline ml-1" />
@@ -157,12 +157,6 @@ export default function LocationsDataTable({ data, customerlist, onSave }) {
                     ))}
                 </th>
               ))}
-              <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                Client Account
-              </th>
-              <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                Tags
-              </th>
               <th className="px-4 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
@@ -175,15 +169,7 @@ export default function LocationsDataTable({ data, customerlist, onSave }) {
                   {item.name}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {item.customer.name}
-                </td>
-                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {item.tags &&
-                    item.tags.split(",").map((tag) => (
-                      <Badge key={tag} variant="outline" className="mr-1">
-                        {tag}
-                      </Badge>
-                    ))}
+                  {item.description}
                 </td>
                 <td className="px-2 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-medium">
                   <Button
@@ -244,14 +230,12 @@ export default function LocationsDataTable({ data, customerlist, onSave }) {
         item={editViewSidebar.item}
         onClose={() => setEditViewSidebar(false)}
         onSave={onSave}
-        customerlist={customerlist}
       />
 
       <AddEntrySidebar
         open={addEntrySidebar}
         onClose={() => setAddEntrySidebar(false)}
         onSave={onSave}
-        customerlist={customerlist}
       />
 
       <DeleteModal
@@ -261,8 +245,8 @@ export default function LocationsDataTable({ data, customerlist, onSave }) {
         }}
         onConfirm={(e) => confirmDelete()}
         username={deleteModal.item?.name}
-        title="Are you sure you want to delete this location?"
-        description={`This action cannot be undone. This will permanently delete the location ${deleteModal.item?.name} and remove their data from our servers.`}
+        title="Are you sure you want to delete this client account?"
+        description={`This action cannot be undone. This will permanently delete the client account ${deleteModal.item?.name} and remove their data from our servers.`}
         proceedbutton={`Delete ${deleteModal.item?.name}`}
       />
     </div>
