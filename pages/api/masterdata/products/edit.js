@@ -1,40 +1,45 @@
-import { SystemResponse } from "@/utils/backend/response";
-import { validateToken } from "@/utils/backend/middleware";
 import prisma from "@/lib/prisma";
-
-const response = new SystemResponse();
+import { validateToken } from "@/utils/backend/middleware";
+import { jwtDecode } from "jwt-decode";
 
 export default async function handler(req, res) {
-  const isTokenValid = await validateToken(req, res);
+  const isTokenValid = validateToken(req, res);
   if (!isTokenValid) return;
 
-  if (req.method !== "PUT") {
-    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
-  }
+  const accountid = parseInt(
+    jwtDecode(req.headers.authorization.split(" ")[1]).accountId
+  );
 
-  try {
-    const { id, name, description, categoryid, subcategoryid, classid, subclassid, brandid, supplierid } = req.body;
+  if (req.method === "PUT") {
+    if (!req.body.id)
+      return res.status(400).json({ message: "Required parameter missing" });
 
-    if (!id) {
-      return response.getFailedResponse(res, 400, { message: "Product ID is required" });
+    const data = {
+      name: req.body.name,
+      description: req.body.description,
+      barcode: req.body.barcode,
+      externalcode: req.body.externalcode,
+      photo: req.body.photo,
+      categoryid: parseInt(req.body.categoryid),
+      subcategoryid: parseInt(req.body.subcategoryid),
+      classid: parseInt(req.body.classid),
+      subclassid: parseInt(req.body.subclassid),
+      brandid: parseInt(req.body.brandid),
+      supplierid: parseInt(req.body.supplierid),
+      tags: req.body.tags,
+    };
+
+    try {
+      await prisma.products.update({
+        data: data,
+        where: {
+          id: parseInt(req.body.id),
+          accountid: parseInt(accountid),
+        },
+      });
+      res.status(200).end();
+    } catch (error) {
+      res.status(500).json({ error: "Error editing data" });
     }
-
-    const updatedProduct = await prisma.products.update({
-      where: { id: parseInt(id) },
-      data: {
-        name,
-        description,
-        categoryid,
-        subcategoryid,
-        classid,
-        subclassid,
-        brandid,
-        supplierid,
-      },
-    });
-
-    return response.getSuccessResponse(res, 200, updatedProduct);
-  } catch (error) {
-    return response.getFailedResponse(res, 500, { message: "Error updating product", error: error.message });
   }
 }

@@ -387,6 +387,10 @@ model Products {
   brand         Brands?        @relation(fields: [brandid], references: [id])
   supplierid    Int?
   supplier      Suppliers?     @relation(fields: [supplierid], references: [id])
+  barcode       String?
+  externalcode  String?
+  photo         String?
+  tags          String?
   isdeleted     Boolean        @default(false)
 }
 

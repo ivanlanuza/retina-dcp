@@ -1,43 +1,44 @@
-import { SystemResponse } from "@/utils/backend/response";
-import { validateToken } from "@/utils/backend/middleware";
 import prisma from "@/lib/prisma";
-
-const response = new SystemResponse();
+import { validateToken } from "@/utils/backend/middleware";
+import { jwtDecode } from "jwt-decode";
+import bcrypt from "bcrypt";
 
 export default async function handler(req, res) {
-  const isTokenValid = await validateToken(req, res);
+  const isTokenValid = validateToken(req, res);
   if (!isTokenValid) return;
 
-  if (req.method !== "POST") {
-    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
-  }
+  const accountid = parseInt(
+    jwtDecode(req.headers.authorization.split(" ")[1]).accountId
+  );
 
-  try {
-    const { 
-      name, accountid, description, categoryid, subcategoryid, 
-      classid, subclassid, brandid, supplierid 
-    } = req.body;
+  if (req.method === "POST") {
+    if (!req.body.name || !req.body.description)
+      return res.status(400).json({ message: "Required parameter missing" });
 
-    if (!name || !accountid) {
-      return response.getFailedResponse(res, 400, { message: "Name and Account ID are required" });
+    const data = {
+      accountid: accountid,
+      name: req.body.name,
+      description: req.body.description,
+      barcode: req.body.barcode,
+      externalcode: req.body.externalcode,
+      photo: req.body.photo,
+      categoryid: parseInt(req.body.categoryid),
+      subcategoryid: parseInt(req.body.subcategoryid),
+      classid: parseInt(req.body.classid),
+      subclassid: parseInt(req.body.subclassid),
+      brandid: parseInt(req.body.brandid),
+      supplierid: parseInt(req.body.supplierid),
+      tags: req.body.tags,
+      updatedAt: new Date(),
+    };
+
+    try {
+      await prisma.products.create({
+        data: data,
+      });
+      res.status(200).end();
+    } catch (error) {
+      res.status(500).json({ error: "Error creating data" });
     }
-
-    const newProduct = await prisma.products.create({
-      data: {
-        name,
-        accountid,
-        description: description || null,
-        categoryid: categoryid || null,
-        subcategoryid: subcategoryid || null,
-        classid: classid || null,
-        subclassid: subclassid || null,
-        brandid: brandid || null,
-        supplierid: supplierid || null,
-      },
-    });
-
-    return response.getSuccessResponse(res, 201, newProduct);
-  } catch (error) {
-    return response.getFailedResponse(res, 500, { message: "Error creating product", error: error.message });
   }
 }
