@@ -10,25 +10,28 @@ export default async function handler(req, res) {
   const isTokenValid = validateToken(req, res);
   if (!isTokenValid) return;
 
-  const accountid = jwtDecode(
-    req.headers.authorization.split(" ")[1]
-  ).accountId;
+  const accountid = parseInt(
+    jwtDecode(req.headers.authorization.split(" ")[1]).accountId
+  );
 
   if (req.method === "GET") {
     try {
       const customers = await prisma.customers.findMany({
         where: {
-          accountid: parseInt(accountid),
+          accountid: accountid,
           isdeleted: false,
         },
+        orderBy: {
+          name: "asc",
+        },
       });
-
+      //console.log(customers);
       res.status(200).json(customers);
       return;
     } catch (error) {
       console.error(error);
       return response.getFailedResponse(res, 500, {
-        message: "Error retrieving roles",
+        message: "Error retrieving data",
         error: error.message,
       });
     }

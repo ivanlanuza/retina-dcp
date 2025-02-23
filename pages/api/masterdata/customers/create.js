@@ -1,34 +1,34 @@
-import { SystemResponse } from "@/utils/backend/response";
-import { validateToken } from "@/utils/backend/middleware";
 import prisma from "@/lib/prisma";
-
-const response = new SystemResponse();
+import { validateToken } from "@/utils/backend/middleware";
+import { jwtDecode } from "jwt-decode";
+import bcrypt from "bcrypt";
 
 export default async function handler(req, res) {
-  const isTokenValid = await validateToken(req, res);
+  const isTokenValid = validateToken(req, res);
   if (!isTokenValid) return;
 
-  if (req.method !== "POST") {
-    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
-  }
+  const accountid = parseInt(
+    jwtDecode(req.headers.authorization.split(" ")[1]).accountId
+  );
 
-  try {
-    const { name, accountid, description } = req.body;
+  if (req.method === "POST") {
+    if (!req.body.name || !req.body.description)
+      return res.status(400).json({ message: "Required parameter missing" });
 
-    if (!name || !accountid) {
-      return response.getFailedResponse(res, 400, { message: "Name and account ID are required" });
+    const data = {
+      accountid: accountid,
+      name: req.body.name,
+      description: req.body.description,
+      updatedAt: new Date(),
+    };
+
+    try {
+      await prisma.customers.create({
+        data: data,
+      });
+      res.status(200).end();
+    } catch (error) {
+      res.status(500).json({ error: "Error creating data" });
     }
-
-    const customer = await prisma.customers.create({
-      data: {
-        name,
-        accountid,
-        description: description || null,
-      },
-    });
-
-    return response.getSuccessResponse(res, 201, { customer });
-  } catch (error) {
-    return response.getFailedResponse(res, 500, { message: "Error creating customer", error: error.message });
   }
 }
