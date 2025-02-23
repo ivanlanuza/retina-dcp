@@ -61,14 +61,14 @@ export function MainSideBar({ companyinitials }) {
             <CollapsibleContent className="pl-4 space-y-0">
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
+                className="w-full justify-start"
                 onClick={() => router.push({ pathname: "/tools/surveys" })}
               >
                 Surveys
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
+                className="w-full justify-start"
                 onClick={() => router.push({ pathname: "/tools/dtr" })}
               >
                 Daily Time Records
@@ -76,27 +76,26 @@ export function MainSideBar({ companyinitials }) {
 
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
-                onClick={() => router.push({ pathname: "/tools/news" })}
+                className="w-full justify-start font-light text-gray-400"
               >
                 News
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
+                className="w-full justify-start font-light text-gray-400"
               >
                 Calendars
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
+                className="w-full justify-start font-light text-gray-400"
               >
                 Checklists
               </Button>
 
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
+                className="w-full justify-start font-light text-gray-400"
                 onClick={() => router.push({ pathname: "/tools/requests" })}
               >
                 Requests
@@ -129,7 +128,7 @@ export function MainSideBar({ companyinitials }) {
             <CollapsibleContent className="pl-4 space-y-1">
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
+                className="w-full justify-start"
                 onClick={() =>
                   router.push({ pathname: "/masterdata/clientaccounts" })
                 }
@@ -138,7 +137,7 @@ export function MainSideBar({ companyinitials }) {
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
+                className="w-full justify-start"
                 onClick={() =>
                   router.push({ pathname: "/masterdata/locations" })
                 }
@@ -147,25 +146,28 @@ export function MainSideBar({ companyinitials }) {
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
+                className="w-full justify-start"
+                onClick={() =>
+                  router.push({ pathname: "/masterdata/products" })
+                }
               >
                 Products
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
+                className="w-full justify-start font-light text-gray-400"
               >
                 Agencies
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
+                className="w-full justify-start font-light text-gray-400"
               >
                 Suppliers
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
+                className="w-full justify-start font-light text-gray-400"
               >
                 Competitors
               </Button>
@@ -197,7 +199,7 @@ export function MainSideBar({ companyinitials }) {
             <CollapsibleContent className="pl-4 space-y-1">
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
+                className="w-full justify-start"
                 onClick={() =>
                   router.push({ pathname: "/administration/users" })
                 }
@@ -206,34 +208,25 @@ export function MainSideBar({ companyinitials }) {
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
+                className="w-full justify-start font-light text-gray-400"
               >
                 Teams
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
-                onClick={() =>
-                  router.push({ pathname: "/administration/roles" })
-                }
+                className="w-full justify-start font-light text-gray-400"
               >
                 Roles
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
-                onClick={() =>
-                  router.push({ pathname: "/administration/datatransfers" })
-                }
+                className="w-full justify-start font-light text-gray-400"
               >
                 Data Transfers
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start font-light"
-                onClick={() =>
-                  router.push({ pathname: "/administration/massuploads" })
-                }
+                className="w-full justify-start font-light text-gray-400"
               >
                 Mass Uploads
               </Button>

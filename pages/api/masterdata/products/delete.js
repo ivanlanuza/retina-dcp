@@ -1,31 +1,32 @@
-import { SystemResponse } from "@/utils/backend/response";
-import { validateToken } from "@/utils/backend/middleware";
 import prisma from "@/lib/prisma";
-
-const response = new SystemResponse();
+import { validateToken } from "@/utils/backend/middleware";
+import { jwtDecode } from "jwt-decode";
 
 export default async function handler(req, res) {
-  const isTokenValid = await validateToken(req, res);
+  const isTokenValid = validateToken(req, res);
   if (!isTokenValid) return;
 
-  if (req.method !== "DELETE") {
-    return response.getFailedResponse(res, 405, { message: "Method not allowed" });
-  }
+  const accountid = parseInt(
+    jwtDecode(req.headers.authorization.split(" ")[1]).accountId
+  );
 
-  try {
-    const { id } = req.body;
+  if (req.method === "PUT") {
+    if (!req.body.id)
+      return res.status(400).json({ message: "Required parameter missing" });
 
-    if (!id) {
-      return response.getFailedResponse(res, 400, { message: "Product ID is required" });
+    try {
+      await prisma.products.update({
+        data: {
+          isdeleted: true,
+        },
+        where: {
+          id: parseInt(req.body.id),
+          accountid: parseInt(accountid),
+        },
+      });
+      res.status(200).end();
+    } catch (error) {
+      res.status(500).json({ error: "Error deleting data" });
     }
-
-    await prisma.products.update({
-      where: { id: parseInt(id) },
-      data: { isdeleted: true },
-    });
-
-    return response.getSuccessResponse(res, 200, { message: "Product deleted successfully" });
-  } catch (error) {
-    return response.getFailedResponse(res, 500, { message: "Error deleting product", error: error.message });
   }
 }

@@ -1,5 +1,5 @@
-import { SystemResponse } from "../../../../utils/backend/response";
-import { validateToken } from "../../../../utils/backend/middleware";
+import { SystemResponse } from "@/utils/backend/response";
+import { validateToken } from "@/utils/backend/middleware";
 import { PrismaClient } from "@prisma/client";
 import { jwtDecode } from "jwt-decode";
 
@@ -18,7 +18,6 @@ export default async function handler(req, res) {
     try {
       const products = await prisma.products.findMany({
         include: {
-          account: true,
           category: true,
           subcategory: true,
           class: true,
@@ -29,14 +28,18 @@ export default async function handler(req, res) {
         where: {
           accountid: accountid,
           isdeleted: false,
+          supplier: {
+            isdeleted: false,
+          },
         },
       });
-
+      //console.log(products);
       res.status(200).json(products);
+      return;
     } catch (error) {
       console.error(error);
       return response.getFailedResponse(res, 500, {
-        message: "Error retrieving products",
+        message: "Error retrieving data",
         error: error.message,
       });
     }
