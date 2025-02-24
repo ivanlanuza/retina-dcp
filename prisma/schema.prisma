@@ -134,6 +134,7 @@ model Locations {
   customer       Customers? @relation(fields: [customerid], references: [id])
   isdeleted      Boolean    @default(false)
   taggedForms    Forms[]    @relation("FormTaggedLocations")
+  DTR            DTR[]
 }
 
 model Forms {
@@ -473,18 +474,19 @@ model SurveyQuestions {
 }
 
 model DTR {
-  id        Int       @id @default(autoincrement())
-  userId    Int
-  user      Users     @relation(fields: [userId], references: [id])
-  date      DateTime
-  checkIn   DateTime?
-  checkOut  DateTime?
-  location  String?
-  accountId Int?
-  account   Accounts? @relation(fields: [accountId], references: [id])
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  isdeleted Boolean   @default(false)
+  id         Int        @id @default(autoincrement())
+  userId     Int
+  user       Users      @relation(fields: [userId], references: [id])
+  date       DateTime
+  checkIn    DateTime?
+  checkOut   DateTime?
+  locationid Int?
+  locations  Locations? @relation(fields: [locationid], references: [id])
+  accountId  Int?
+  account    Accounts?  @relation(fields: [accountId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  isdeleted  Boolean    @default(false)
 }
 
 model SurveySubmissions {

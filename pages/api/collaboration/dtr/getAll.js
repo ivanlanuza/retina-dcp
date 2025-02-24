@@ -19,10 +19,12 @@ export default async function handler(req, res) {
       const dtrs = await prisma.dTR.findMany({
         where: {
           isdeleted: false,
+          accountId: accountId,
         },
         include: {
           user: true,
-          account: true
+          account: true,
+          locations: true,
         },
       });
 
