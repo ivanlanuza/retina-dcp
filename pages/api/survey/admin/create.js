@@ -1,3 +1,8 @@
+/*
+EXPECTED PAYLOAD
+
+*/
+
 import prisma from "@/lib/prisma";
 import { validateToken } from "@/utils/backend/middleware";
 import { jwtDecode } from "jwt-decode";
