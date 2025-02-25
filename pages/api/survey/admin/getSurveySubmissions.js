@@ -17,20 +17,39 @@ export default async function handler(req, res) {
   if (req.method === "GET") {
     try {
       const surveysubmissions = await prisma.$queryRaw`
-      SELECT SurveySubmissions.id'Submission ID', Surveys.id'Survey ID', Surveys.title'Survey Title', 
-        Surveys.description'Survey Description', Users.username'Username', SurveyQuestions.id'Question ID', 
-        SurveyQuestions.question'Question', 
-        JSON_EXTRACT(SurveyAnswers.answerValue,'$[0].answer')'Answer'
-
-         
+      SELECT 
+          SurveySubmissions.id AS 'Submission ID',
+          Surveys.id AS 'Survey ID',
+          Surveys.title AS 'Survey Title',
+          Surveys.description AS 'Survey Description',
+          Users.username AS 'Username',
+          SurveyQuestions.id AS 'Question ID',
+          SurveyQuestions.question AS 'Question',
+          COALESCE(
+              GROUP_CONCAT(
+                  JSON_UNQUOTE(
+                      JSON_EXTRACT(choice_item, '$.choice')
+                  ) SEPARATOR ', '
+              ),
+              JSON_UNQUOTE(JSON_EXTRACT(CAST(JSON_UNQUOTE(SurveyAnswers.answerValue) AS JSON), '$[0].answer')), 
+              JSON_UNQUOTE(JSON_EXTRACT(CAST(JSON_UNQUOTE(SurveyAnswers.answerValue) AS JSON), '$.answer'))
+          ) AS 'Answer'
       FROM SurveyAnswers
-      LEFT JOIN Surveys on Surveys.id = SurveyAnswers.surveyId
-      LEFT JOIN SurveySubmissions on SurveySubmissions.id = SurveyAnswers.submissionId
-      LEFT JOIN Users on Users.id = SurveySubmissions.userId
+      LEFT JOIN Surveys ON Surveys.id = SurveyAnswers.surveyId
+      LEFT JOIN SurveySubmissions ON SurveySubmissions.id = SurveyAnswers.submissionId
+      LEFT JOIN Users ON Users.id = SurveySubmissions.userId
       LEFT JOIN SurveyQuestions ON SurveyQuestions.id = SurveyAnswers.questionId
+      LEFT JOIN JSON_TABLE(
+          CAST(JSON_UNQUOTE(SurveyAnswers.answerValue) AS JSON),
+          '$[*].answer[*]'
+          COLUMNS (
+              choice_item JSON PATH '$'
+          )
+      ) AS choices ON TRUE
       WHERE SurveyAnswers.isdeleted = 0 
-        AND SurveyAnswers.accountId = ${accountid} 
-        AND SurveyAnswers.surveyId = ${parseInt(req.query.surveyid)}`;
+        AND SurveyAnswers.accountId = ${accountid}
+        AND SurveyAnswers.surveyId = ${parseInt(req.query.surveyid)}
+      GROUP BY SurveySubmissions.id, SurveyAnswers.id;`;
 
       //console.log(surveysubmissions);
       res.status(200).json(surveysubmissions);
