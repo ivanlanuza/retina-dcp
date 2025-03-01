@@ -15,11 +15,13 @@ import {
   Upload,
   MapPin,
   Download,
+  PackageSearch,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import DeleteModal from "@/components/core/DeleteModal";
+import LocationProductsSidebar from "./LocationProductsSidebar";
 
 import EditViewSidebar from "./EditViewSidebar";
 import AddEntrySidebar from "./AddEntrySidebar";
@@ -40,6 +42,11 @@ export default function LocationsDataTable({ data, customerlist, onSave }) {
   });
   const [addEntrySidebar, setAddEntrySidebar] = useState(false);
   const [deleteModal, setDeleteModal] = useState({ open: false, item: null });
+
+  const [assignLocationsSidebar, setAssignLocationsSidebar] = useState({
+    open: false,
+    item: null,
+  });
 
   const filteredData = useMemo(() => {
     return data.filter((item) =>
@@ -111,6 +118,10 @@ export default function LocationsDataTable({ data, customerlist, onSave }) {
       }
     }
   }
+
+  const handleAssignLocations = (item) => {
+    setAssignLocationsSidebar({ open: true, item });
+  };
 
   return (
     <div className="container mt-4 font-sans text-gray-900">
@@ -207,6 +218,13 @@ export default function LocationsDataTable({ data, customerlist, onSave }) {
                   >
                     <Trash className="h-4 w-4" />
                   </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleAssignLocations(item)}
+                  >
+                    <PackageSearch className="h-4 w-4" />
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -264,6 +282,12 @@ export default function LocationsDataTable({ data, customerlist, onSave }) {
         title="Are you sure you want to delete this location?"
         description={`This action cannot be undone. This will permanently delete the location ${deleteModal.item?.name} and remove their data from our servers.`}
         proceedbutton={`Delete ${deleteModal.item?.name}`}
+      />
+
+      <LocationProductsSidebar
+        open={assignLocationsSidebar.open}
+        item={assignLocationsSidebar.item}
+        onClose={() => setAssignLocationsSidebar({ open: false, item: null })}
       />
     </div>
   );
