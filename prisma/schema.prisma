@@ -20,86 +20,90 @@ enum AccountStatus {
 }
 
 model Accounts {
-  id                Int                 @id @default(autoincrement())
-  name              String              @unique
-  status            AccountStatus       @default(ACTIVE)
-  isactive          Boolean             @default(true)
-  admin             String?
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  createdBy         Users?              @relation("AccountCreatedBy", fields: [createdById], references: [id])
-  createdById       Int?
-  updatedBy         Users?              @relation("AccountUpdatedBy", fields: [updatedById], references: [id])
-  updatedById       Int?
-  isdeleted         Boolean             @default(false)
-  users             Users[]
-  roles             Roles[]
-  locations         Locations[]
-  Agencies          Agencies[]
-  Teams             Teams[]
-  Customers         Customers[]
-  Suppliers         Suppliers[]
-  Brands            Brands[]
-  Categories        Categories[]
-  Subcategories     Subcategories[]
-  Classes           Classes[]
-  Subclasses        Subclasses[]
-  Competitors       Competitors[]
-  CompetitorBrands  CompetitorBrands[]
-  Products          Products[]
-  News              News[]
-  NewsUsers         NewsUsers[]
-  Surveys           Surveys[]
-  SurveyQuestions   SurveyQuestions[]
-  SurveySubmissions SurveySubmissions[]
-  SurveyAnswers     SurveyAnswers[]
-  DTR               DTR[]
+  id                   Int                    @id @default(autoincrement())
+  name                 String                 @unique
+  status               AccountStatus          @default(ACTIVE)
+  isactive             Boolean                @default(true)
+  admin                String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  createdBy            Users?                 @relation("AccountCreatedBy", fields: [createdById], references: [id])
+  createdById          Int?
+  updatedBy            Users?                 @relation("AccountUpdatedBy", fields: [updatedById], references: [id])
+  updatedById          Int?
+  isdeleted            Boolean                @default(false)
+  users                Users[]
+  roles                Roles[]
+  locations            Locations[]
+  Agencies             Agencies[]
+  Teams                Teams[]
+  Customers            Customers[]
+  Suppliers            Suppliers[]
+  Brands               Brands[]
+  Categories           Categories[]
+  Subcategories        Subcategories[]
+  Classes              Classes[]
+  Subclasses           Subclasses[]
+  Competitors          Competitors[]
+  CompetitorBrands     CompetitorBrands[]
+  Products             Products[]
+  News                 News[]
+  NewsUsers            NewsUsers[]
+  Surveys              Surveys[]
+  SurveyQuestions      SurveyQuestions[]
+  SurveySubmissions    SurveySubmissions[]
+  SurveyAnswers        SurveyAnswers[]
+  DTR                  DTR[]
+  ProductLocations     ProductLocations[]
+  InventoryAdjustments InventoryAdjustments[]
 }
 
 model Users {
-  id                Int                 @id @default(autoincrement())
-  account           Accounts            @relation(fields: [accountId], references: [id])
-  accountId         Int
-  username          String              @unique
-  password          String
-  firstname         String?
-  lastname          String?
-  email             String?
-  mobile            String?
-  agencyid          Int?
-  agency            Agencies?           @relation(fields: [agencyid], references: [id])
-  teamid            Int?
-  team              Teams?              @relation(fields: [teamid], references: [id])
-  managerid         Int?
-  manager           Users?              @relation("UserManager", fields: [managerid], references: [id])
-  status            UserStatus          @default(ACTIVE)
-  role              Roles               @relation(fields: [roleId], references: [id])
-  roleId            Int
-  tags              String?
-  accesslocation    String?             @db.Text
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  createdBy         Users?              @relation("UserCreatedBy", fields: [createdById], references: [id])
-  createdById       Int?
-  updatedBy         Users?              @relation("UserUpdatedBy", fields: [updatedById], references: [id])
-  updatedById       Int?
-  isdeleted         Boolean             @default(false)
-  createdAccounts   Accounts[]          @relation("AccountCreatedBy")
-  updatedAccounts   Accounts[]          @relation("AccountUpdatedBy")
-  createdRoles      Roles[]             @relation("RoleCreatedBy")
-  updatedRoles      Roles[]             @relation("RoleUpdatedBy")
-  createdLocations  Locations[]         @relation("LocationCreatedBy")
-  updatedLocations  Locations[]         @relation("LocationUpdatedBy")
-  CreatedBy         Users[]             @relation("UserCreatedBy")
-  UpdatedBy         Users[]             @relation("UserUpdatedBy")
-  forms             Forms[]
-  submissions       Submissions[]       @relation("UserSubmissions")
-  taggedForms       Forms[]             @relation("FormTaggedUsers")
-  Users             Users[]             @relation("UserManager")
-  NewsUsers         NewsUsers[]
-  Surveys           Surveys[]
-  dtrs              DTR[]
-  SurveySubmissions SurveySubmissions[]
+  id                   Int                    @id @default(autoincrement())
+  account              Accounts               @relation(fields: [accountId], references: [id])
+  accountId            Int
+  username             String                 @unique
+  password             String
+  firstname            String?
+  lastname             String?
+  email                String?
+  mobile               String?
+  agencyid             Int?
+  agency               Agencies?              @relation(fields: [agencyid], references: [id])
+  teamid               Int?
+  team                 Teams?                 @relation(fields: [teamid], references: [id])
+  managerid            Int?
+  manager              Users?                 @relation("UserManager", fields: [managerid], references: [id])
+  status               UserStatus             @default(ACTIVE)
+  role                 Roles                  @relation(fields: [roleId], references: [id])
+  roleId               Int
+  tags                 String?
+  accesslocation       String?                @db.Text
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  createdBy            Users?                 @relation("UserCreatedBy", fields: [createdById], references: [id])
+  createdById          Int?
+  updatedBy            Users?                 @relation("UserUpdatedBy", fields: [updatedById], references: [id])
+  updatedById          Int?
+  isdeleted            Boolean                @default(false)
+  createdAccounts      Accounts[]             @relation("AccountCreatedBy")
+  updatedAccounts      Accounts[]             @relation("AccountUpdatedBy")
+  createdRoles         Roles[]                @relation("RoleCreatedBy")
+  updatedRoles         Roles[]                @relation("RoleUpdatedBy")
+  createdLocations     Locations[]            @relation("LocationCreatedBy")
+  updatedLocations     Locations[]            @relation("LocationUpdatedBy")
+  CreatedBy            Users[]                @relation("UserCreatedBy")
+  UpdatedBy            Users[]                @relation("UserUpdatedBy")
+  forms                Forms[]
+  submissions          Submissions[]          @relation("UserSubmissions")
+  taggedForms          Forms[]                @relation("FormTaggedUsers")
+  Users                Users[]                @relation("UserManager")
+  NewsUsers            NewsUsers[]
+  Surveys              Surveys[]
+  dtrs                 DTR[]
+  SurveySubmissions    SurveySubmissions[]
+  ProductLocations     ProductLocations[]
+  InventoryAdjustments InventoryAdjustments[]
 }
 
 model Roles {
@@ -118,23 +122,25 @@ model Roles {
 }
 
 model Locations {
-  id             Int        @id @default(autoincrement())
-  account        Accounts   @relation(fields: [accountId], references: [id])
-  accountId      Int
-  name           String
-  geocoordinates String?
-  tags           String?
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  createdBy      Users?     @relation("LocationCreatedBy", fields: [createdById], references: [id])
-  createdById    Int?
-  updatedBy      Users?     @relation("LocationUpdatedBy", fields: [updatedById], references: [id])
-  updatedById    Int?
-  customerid     Int?
-  customer       Customers? @relation(fields: [customerid], references: [id])
-  isdeleted      Boolean    @default(false)
-  taggedForms    Forms[]    @relation("FormTaggedLocations")
-  DTR            DTR[]
+  id                   Int                    @id @default(autoincrement())
+  account              Accounts               @relation(fields: [accountId], references: [id])
+  accountId            Int
+  name                 String
+  geocoordinates       String?
+  tags                 String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  createdBy            Users?                 @relation("LocationCreatedBy", fields: [createdById], references: [id])
+  createdById          Int?
+  updatedBy            Users?                 @relation("LocationUpdatedBy", fields: [updatedById], references: [id])
+  updatedById          Int?
+  customerid           Int?
+  customer             Customers?             @relation(fields: [customerid], references: [id])
+  isdeleted            Boolean                @default(false)
+  taggedForms          Forms[]                @relation("FormTaggedLocations")
+  DTR                  DTR[]
+  ProductLocations     ProductLocations[]
+  InventoryAdjustments InventoryAdjustments[]
 }
 
 model Forms {
@@ -369,30 +375,32 @@ model CompetitorBrands {
 }
 
 model Products {
-  id            Int            @id @default(autoincrement())
-  name          String
-  accountid     Int
-  account       Accounts       @relation(fields: [accountid], references: [id])
-  description   String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  categoryid    Int?
-  category      Categories?    @relation(fields: [categoryid], references: [id])
-  subcategoryid Int?
-  subcategory   Subcategories? @relation(fields: [subcategoryid], references: [id])
-  classid       Int?
-  class         Classes?       @relation(fields: [classid], references: [id])
-  subclassid    Int?
-  subclass      Subclasses?    @relation(fields: [subclassid], references: [id])
-  brandid       Int?
-  brand         Brands?        @relation(fields: [brandid], references: [id])
-  supplierid    Int?
-  supplier      Suppliers?     @relation(fields: [supplierid], references: [id])
-  barcode       String?
-  externalcode  String?
-  photo         String?
-  tags          String?
-  isdeleted     Boolean        @default(false)
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  accountid            Int
+  account              Accounts               @relation(fields: [accountid], references: [id])
+  description          String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  categoryid           Int?
+  category             Categories?            @relation(fields: [categoryid], references: [id])
+  subcategoryid        Int?
+  subcategory          Subcategories?         @relation(fields: [subcategoryid], references: [id])
+  classid              Int?
+  class                Classes?               @relation(fields: [classid], references: [id])
+  subclassid           Int?
+  subclass             Subclasses?            @relation(fields: [subclassid], references: [id])
+  brandid              Int?
+  brand                Brands?                @relation(fields: [brandid], references: [id])
+  supplierid           Int?
+  supplier             Suppliers?             @relation(fields: [supplierid], references: [id])
+  barcode              String?
+  externalcode         String?
+  photo                String?
+  tags                 String?
+  isdeleted            Boolean                @default(false)
+  ProductLocations     ProductLocations[]
+  InventoryAdjustments InventoryAdjustments[]
 }
 
 model News {
@@ -514,4 +522,38 @@ model SurveyAnswers {
   accountId    Int?
   account      Accounts?         @relation(fields: [accountId], references: [id])
   isdeleted    Boolean           @default(false)
+}
+
+model ProductLocations {
+  id             Int       @id @default(autoincrement())
+  productid      Int
+  product        Products  @relation(fields: [productid], references: [id])
+  locationid     Int
+  location       Locations @relation(fields: [locationid], references: [id])
+  isactive       Boolean   @default(true)
+  inventorycount Int       @default(0)
+  isdeleted      Boolean   @default(false)
+  userid         Int?
+  user           Users?    @relation(fields: [userid], references: [id])
+  accountid      Int?
+  account        Accounts? @relation(fields: [accountid], references: [id])
+  createdAt      DateTime  @default(now())
+}
+
+model InventoryAdjustments {
+  id                Int       @id @default(autoincrement())
+  productid         Int
+  product           Products  @relation(fields: [productid], references: [id])
+  locationid        Int
+  location          Locations @relation(fields: [locationid], references: [id])
+  oldinventorycount Int
+  adjustmentqty     Int
+  newinventorycount Int
+  isdeleted         Boolean   @default(false)
+  userid            Int?
+  user              Users?    @relation(fields: [userid], references: [id])
+  accountid         Int?
+  account           Accounts? @relation(fields: [accountid], references: [id])
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }
