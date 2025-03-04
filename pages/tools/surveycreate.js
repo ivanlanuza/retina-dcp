@@ -17,6 +17,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 
 const App = () => {
@@ -34,6 +35,22 @@ const App = () => {
     scopeList: [],
   });
   const [questions, setQuestions] = useState([]);
+  const [itemlist, setItemList] = useState();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    fetch("/api/masterdata/products/getProducts", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setItemList(data);
+      });
+  }, []);
 
   const handleAddQuestion = () => {
     setQuestions([
@@ -79,11 +96,12 @@ const App = () => {
 
   const goToReview = () => {
     setScreen("review");
-    //console.log(questions);
+    //console.log("review", questions);
   };
 
   const backToCreate = () => {
     setScreen("create");
+    //console.log("back to create", questions);
   };
 
   const goToSettings = () => {
@@ -190,7 +208,12 @@ const App = () => {
               {form.description}
             </p>
             {questions.map((question, index) => (
-              <QuestionPreview key={index} question={question} index={index} />
+              <QuestionPreview
+                key={index}
+                question={question}
+                index={index}
+                itemlist={itemlist}
+              />
             ))}
           </div>
           <div className="flex justify-end gap-4">
@@ -244,6 +267,9 @@ const App = () => {
         <DialogContent className="font-sans">
           <DialogHeader>
             <DialogTitle>Success! 🎉</DialogTitle>
+            <DialogDescription>
+              Your survey has been created successfully!
+            </DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <p>Survey created successfully!</p>

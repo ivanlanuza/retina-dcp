@@ -27,7 +27,7 @@ export default async function handler(req, res) {
         accountid: accountid,
       }));
 
-      console.log(prismaCreateData);
+      //console.log(prismaCreateData);
       try {
         await prisma.productLocations.createMany({
           data: prismaCreateData,

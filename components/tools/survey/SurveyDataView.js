@@ -7,6 +7,7 @@ import QuestionRenderer from "./QuestionRenderer";
 
 export default function SurveyDataView({ open, mode, surveyid, onClose }) {
   const [surveydata, setSurveyData] = useState();
+  const [itemlist, setItemList] = useState();
 
   useEffect(() => {
     if (surveyid) {
@@ -27,14 +28,25 @@ export default function SurveyDataView({ open, mode, surveyid, onClose }) {
         .then((res) => res.json())
         .then((data) => {
           setSurveyData(data);
-          console.log(data);
+          //console.log(data);
+        });
+
+      fetch("/api/masterdata/products/getProducts", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setItemList(data);
         });
     }
   }, [surveyid]);
 
   return (
     <div>
-      {surveydata && (
+      {surveydata && itemlist && (
         <div>
           {/* Overlay */}
           <div
@@ -78,6 +90,7 @@ export default function SurveyDataView({ open, mode, surveyid, onClose }) {
                     key={index}
                     question={question}
                     index={index}
+                    itemlist={itemlist}
                   />
                 ))}
               </div>
