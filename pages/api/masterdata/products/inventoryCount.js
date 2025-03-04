@@ -24,7 +24,7 @@ export default async function handler(req, res) {
             return response.getFailedResponse(res, 400, { error: updateRecords.error });
         }
 
-        return response.getSuccessResponse(res, 200, { message: "Inventory and product locations updated successfully." });
+        return response.getSuccessResponse(res, 200, { message: "Inventory and product locations added/updated successfully." });
 
     } catch (e) {
         console.error("Transaction Error:", e);
