@@ -48,10 +48,10 @@ export default function Login() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="#5349df"
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-sprout"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-sprout"
             >
               <path d="M7 20h10" />
               <path d="M10 20c5.5-2.5.8-6.4 3-10" />

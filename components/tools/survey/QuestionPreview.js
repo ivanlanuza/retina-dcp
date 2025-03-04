@@ -17,7 +17,18 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function QuestionPreview({ question, index }) {
+export default function QuestionPreview({ question, index, itemlist }) {
+  const findTitle = (array, id, field = null) => {
+    const item = array.find((item) => item.id === id);
+
+    if (!item) return null; // Return null if ID not found
+    if (typeof item[field] === "object") {
+      return item[field]?.name || null; // Access nested key if it's an object
+    }
+
+    return item[field] || null; // Return main field if item is object
+  };
+
   return (
     <div key={index}>
       <p className="text-xs text-indigo-400 font-light">
@@ -83,6 +94,84 @@ export default function QuestionPreview({ question, index }) {
       )}
       {question.type === "photo" && (
         <Input placeholder="" type="file" className="bg-white mt-0" />
+      )}
+      {question.type === "tablelist" && question.options && (
+        <table className="border-2 border-gray-600 font-sans w-full text-xs">
+          <thead>
+            <tr>
+              <th className="p-2 border text-left bg-gray-600 text-white">
+                {question.options[0].reference_row}
+              </th>
+
+              {question.options[0].columns.map(
+                (field, index) =>
+                  field.title.length > 0 && (
+                    <th
+                      className="p-2 border  text-left bg-gray-600 text-white"
+                      key={index}
+                    >
+                      {field.title}
+                    </th>
+                  )
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {question.options[0].datalist.map((item, index) => (
+              <tr key={index}>
+                <td className="p-2 border">
+                  <p className="font-semibold text-gray-600">
+                    {findTitle(
+                      itemlist,
+                      item.productid,
+                      question.options[0].display_data[0].field
+                    )}
+                  </p>
+                  {question.options[0].display_data.length > 1 && (
+                    <p className="font-thin text-gray-600">
+                      {findTitle(
+                        itemlist,
+                        item.productid,
+                        question.options[0].display_data[1].field
+                      )}
+                    </p>
+                  )}
+                </td>
+                {question.options[0].columns.map(
+                  (field, index) =>
+                    field.title.length > 0 && (
+                      <td className="p-2 border text-xs" key={index}>
+                        {field.type === "Dropdown" ? (
+                          <Select>
+                            <SelectTrigger className="w-full bg-white font-sans text-xs">
+                              <SelectValue placeholder="Select type" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white font-sans">
+                              {field.options.split(",").map((option, index) => (
+                                <SelectItem
+                                  value={option}
+                                  key={index}
+                                  className="text-xs"
+                                >
+                                  {option}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <Input
+                            type={field.type}
+                            placeholder=""
+                            className="bg-white text-xs"
+                          />
+                        )}
+                      </td>
+                    )
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
 
       {(question.isMandatory || question.geofence) && (

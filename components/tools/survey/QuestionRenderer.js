@@ -17,7 +17,19 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function QuestionRenderer({ question, index }) {
+const findTitle = (array, id, field = null) => {
+  //console.log(array, id, field);
+  const item = array.find((item) => item.id === id);
+
+  if (!item) return null; // Return null if ID not found
+  if (typeof item[field] === "object") {
+    return item[field]?.name || null; // Access nested key if it's an object
+  }
+
+  return item[field] || null; // Return main field if item is object
+};
+
+export default function QuestionRenderer({ question, index, itemlist }) {
   return (
     <div key={index} className="mt-4 px-4">
       <p className="text-xs text-zinc-400 font-light">Question # {index + 1}</p>
@@ -81,6 +93,84 @@ export default function QuestionRenderer({ question, index }) {
       )}
       {question.type === "photo" && (
         <Input placeholder="" type="file" className="bg-white mt-0" />
+      )}
+      {question.type === "tablelist" && question.options && (
+        <table className="border-2 border-gray-600 font-sans w-full text-xs">
+          <thead>
+            <tr>
+              <th className="p-2 border text-left bg-gray-600 text-white">
+                {JSON.parse(question.options)[0].reference_row}
+              </th>
+
+              {JSON.parse(question.options)[0].columns.map(
+                (field, index) =>
+                  field.title.length > 0 && (
+                    <th
+                      className="p-2 border  text-left bg-gray-600 text-white"
+                      key={index}
+                    >
+                      {field.title}
+                    </th>
+                  )
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {JSON.parse(question.options)[0].datalist.map((item, index) => (
+              <tr key={index}>
+                <td className="p-2 border">
+                  <p className="font-semibold text-gray-600">
+                    {findTitle(
+                      itemlist,
+                      item.productid,
+                      JSON.parse(question.options)[0].display_data[0].field
+                    )}
+                  </p>
+                  {JSON.parse(question.options)[0].display_data.length > 1 && (
+                    <p className="font-thin text-gray-600">
+                      {findTitle(
+                        itemlist,
+                        item.productid,
+                        JSON.parse(question.options)[0].display_data[1].field
+                      )}
+                    </p>
+                  )}
+                </td>
+                {JSON.parse(question.options)[0].columns.map(
+                  (field, index) =>
+                    field.title.length > 0 && (
+                      <td className="p-2 border text-xs" key={index}>
+                        {field.type === "Dropdown" ? (
+                          <Select>
+                            <SelectTrigger className="w-full bg-white font-sans text-xs">
+                              <SelectValue placeholder="Select type" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white font-sans">
+                              {field.options.split(",").map((option, index) => (
+                                <SelectItem
+                                  value={option}
+                                  key={index}
+                                  className="text-xs"
+                                >
+                                  {option}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <Input
+                            type={field.type}
+                            placeholder=""
+                            className="bg-white text-xs"
+                          />
+                        )}
+                      </td>
+                    )
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
 
       {(question.isMandatory || question.geofence) && (

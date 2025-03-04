@@ -3,6 +3,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 import { Trash, Copy, CircleArrowRight } from "lucide-react";
+import TableReferenceSidebar from "./TableReferenceSidebar";
+
+import { useState } from "react";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -17,6 +20,11 @@ export default function QuestionEditor({
   const updateQuestion = (updates) => {
     onChange({ ...question, ...updates });
   };
+
+  const [tableReferenceSidebar, setTableReferenceSidebar] = useState({
+    open: false,
+    item: null,
+  });
 
   return (
     <div className="border border-indigo-200 bg-white rounded-lg p-4 space-y-4">
@@ -55,6 +63,17 @@ export default function QuestionEditor({
           </select>
         </div>
       </div>
+
+      {["tablelist"].includes(question.type) && (
+        <div
+          onClick={() =>
+            setTableReferenceSidebar({ open: true, item: question })
+          }
+          className="ml-8 border  bg-indigo-50  hover:font-bold rounded-md h-10 border-dashed border-indigo-400 flex justify-center items-center hover:cursor-pointer hover:border-indigo-800"
+        >
+          <p className="pl-2 text-sm text-indigo-600">Configure Table Input</p>
+        </div>
+      )}
 
       {["radio", "dropdown", "checklist"].includes(question.type) && (
         <div>
@@ -137,6 +156,23 @@ export default function QuestionEditor({
           </Label>
         </div>
       </div>
+
+      <TableReferenceSidebar
+        open={tableReferenceSidebar.open}
+        item={tableReferenceSidebar.item}
+        onClose={(referencetable, displaydata, columns, datalist) => {
+          setTableReferenceSidebar({ open: false, item: null });
+          const tableoptions = [
+            {
+              reference_row: referencetable.value,
+              columns: columns,
+              display_data: displaydata,
+              datalist: datalist,
+            },
+          ];
+          updateQuestion({ options: tableoptions });
+        }}
+      />
     </div>
   );
 }
