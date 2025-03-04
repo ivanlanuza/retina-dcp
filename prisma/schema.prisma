@@ -138,6 +138,7 @@ model Locations {
   customer             Customers?             @relation(fields: [customerid], references: [id])
   isdeleted            Boolean                @default(false)
   taggedForms          Forms[]                @relation("FormTaggedLocations")
+  externalcode         String?
   DTR                  DTR[]
   ProductLocations     ProductLocations[]
   InventoryAdjustments InventoryAdjustments[]
@@ -244,15 +245,16 @@ model Teams {
 }
 
 model Customers {
-  id          Int         @id @default(autoincrement())
-  name        String
-  accountid   Int
-  account     Accounts    @relation(fields: [accountid], references: [id])
-  description String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  isdeleted   Boolean     @default(false)
-  Locations   Locations[]
+  id           Int         @id @default(autoincrement())
+  name         String
+  accountid    Int
+  account      Accounts    @relation(fields: [accountid], references: [id])
+  description  String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  isdeleted    Boolean     @default(false)
+  externalcode String?
+  Locations    Locations[]
 }
 
 model Suppliers {
