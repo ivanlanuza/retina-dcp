@@ -58,7 +58,7 @@ export default function Dashboard() {
     fetch(
       "/api/locations/getLocationsOOS?" +
         new URLSearchParams({
-          limit: 10,
+          limit: 5,
         }),
       {
         headers: {
@@ -94,15 +94,18 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3 mb-8">
+        <div className="grid gap-4 md:grid-cols-2 mb-8">
           <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-md">
-            <h2 className="text-sm font-medium text-gray-500 mt-2">
+            <h2 className="text-sm font-medium text-zinc-500 mt-2">
               Locations with most Out-of-Stock SKUs
             </h2>
             <div>
               <Table className="text-xs text-gray-400 -mx-2 mt-6">
                 <TableHeader>
                   <TableRow className="">
+                    <TableHead className="text-left text-indigo-800">
+                      #
+                    </TableHead>
                     <TableHead className="text-left text-indigo-800">
                       Location
                     </TableHead>
@@ -119,6 +122,9 @@ export default function Dashboard() {
                   ) : (
                     oos.data.map((location, index) => (
                       <TableRow key={index}>
+                        <TableCell className="text-left">
+                          {index + 1}{" "}
+                        </TableCell>
                         <TableCell className="text-left">
                           {location.name}
                         </TableCell>
