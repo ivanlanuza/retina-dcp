@@ -21,6 +21,7 @@ export default async function handler(req, res) {
 
     const inventory = await prisma.inventoryAdjustments.findMany({
       where: { locationid: Number(locationid) },
+      include: { product: true}
     });
 
     if (inventory.length === 0) {
