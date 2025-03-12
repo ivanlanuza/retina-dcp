@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import {
@@ -13,21 +13,34 @@ import { ChevronDown, ChevronUp, LogOut } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 const handleLogout = () => {
-  // Remove token from client storage
-  localStorage.removeItem("token"); // or sessionStorage
-  // Redirect to login page
+  localStorage.removeItem("token");
   window.location.href = "/";
 };
 
+const sectionMapping = {
+  tools: "collaboration",
+  masterdata: "masterdata",
+  administration: "settings",
+};
+
 export function MainSideBar({ companyinitials }) {
-  const [isCollaborationOpen, setisCollaborationOpen] = useState(true);
-  const [isMasterDataOpen, setisMasterDataOpen] = useState(false);
-  const [isSettingsOpen, setisSettingsOpen] = useState(false);
   const router = useRouter();
+  const { pathname } = router;
+  const [openSection, setOpenSection] = useState(null);
+
+  useEffect(() => {
+    const matchedSection = Object.keys(sectionMapping).find((key) =>
+      pathname.startsWith(`/${key}`)
+    );
+    setOpenSection(matchedSection ? sectionMapping[matchedSection] : null);
+  }, [pathname]);
+
+  const handleToggle = (section) => {
+    setOpenSection((prev) => (prev === section ? null : section));
+  };
 
   return (
     <div className="w-64 bg-indigo-500 border-r p-4 font-sans text-xs text-white flex flex-col justify-between ">
-      {/* Sidebar Header */}
       <div>
         <div className="mb-6">
           <Link href="/home">
@@ -38,202 +51,66 @@ export function MainSideBar({ companyinitials }) {
         </div>
 
         <div>
-          {/* Products Collapsible Group */}
-          <Collapsible
-            open={isCollaborationOpen}
-            onOpenChange={setisCollaborationOpen}
-            className="space-y-2"
-          >
-            <CollapsibleTrigger asChild>
-              <Button
-                variant="ghost"
-                className="w-full flex justify-between items-center"
-              >
-                <span>Collaboration Tools</span>
-                {isCollaborationOpen ? (
-                  <ChevronUp className="h-4 w-4" />
-                ) : (
-                  <ChevronDown className="h-4 w-4" />
-                )}
-              </Button>
-            </CollapsibleTrigger>
-
-            <CollapsibleContent className="pl-4 space-y-0">
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() => router.push({ pathname: "/tools/surveys" })}
-              >
-                Surveys
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() => router.push({ pathname: "/tools/dtr" })}
-              >
-                Daily Time Records
-              </Button>
-
-              <Button
-                variant="ghost"
-                className="w-full justify-start font-light text-gray-400"
-              >
-                News
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start font-light text-gray-400"
-              >
-                Calendars
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start font-light text-gray-400"
-              >
-                Checklists
-              </Button>
-
-              <Button
-                variant="ghost"
-                className="w-full justify-start font-light text-gray-400"
-                onClick={() => router.push({ pathname: "/tools/requests" })}
-              >
-                Requests
-              </Button>
-            </CollapsibleContent>
-          </Collapsible>
-
-          <Separator className="my-4" />
-
-          {/* Orders Collapsible Group */}
-          <Collapsible
-            open={isMasterDataOpen}
-            onOpenChange={setisMasterDataOpen}
-            className="space-y-2"
-          >
-            <CollapsibleTrigger asChild>
-              <Button
-                variant="ghost"
-                className="w-full flex justify-between items-center"
-              >
-                <span>Master Data</span>
-                {isMasterDataOpen ? (
-                  <ChevronUp className="h-4 w-4" />
-                ) : (
-                  <ChevronDown className="h-4 w-4" />
-                )}
-              </Button>
-            </CollapsibleTrigger>
-
-            <CollapsibleContent className="pl-4 space-y-1">
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() =>
-                  router.push({ pathname: "/masterdata/clientaccounts" })
-                }
-              >
-                Client Accounts
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() =>
-                  router.push({ pathname: "/masterdata/locations" })
-                }
-              >
-                Locations
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() =>
-                  router.push({ pathname: "/masterdata/products" })
-                }
-              >
-                Products
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start font-light text-gray-400"
-              >
-                Agencies
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start font-light text-gray-400"
-              >
-                Suppliers
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start font-light text-gray-400"
-              >
-                Competitors
-              </Button>
-            </CollapsibleContent>
-          </Collapsible>
-
-          <Separator className="my-4" />
-
-          {/* Analytics Collapsible Group */}
-          <Collapsible
-            open={isSettingsOpen}
-            onOpenChange={setisSettingsOpen}
-            className="space-y-2"
-          >
-            <CollapsibleTrigger asChild>
-              <Button
-                variant="ghost"
-                className="w-full flex justify-between items-center"
-              >
-                <span>Administration</span>
-                {isSettingsOpen ? (
-                  <ChevronUp className="h-4 w-4" />
-                ) : (
-                  <ChevronDown className="h-4 w-4" />
-                )}
-              </Button>
-            </CollapsibleTrigger>
-
-            <CollapsibleContent className="pl-4 space-y-1">
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() =>
-                  router.push({ pathname: "/administration/users" })
-                }
-              >
-                Users
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start font-light text-gray-400"
-              >
-                Teams
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start font-light text-gray-400"
-              >
-                Roles
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start font-light text-gray-400"
-              >
-                Data Transfers
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start font-light text-gray-400"
-              >
-                Mass Uploads
-              </Button>
-            </CollapsibleContent>
-          </Collapsible>
+          {[{
+            key: "collaboration", label: "Collaboration Tools", links: [
+              { href: "/tools/surveys", text: "Surveys" },
+              { href: "/tools/dtr", text: "Daily Time Records" },
+              { href: "", text: "News" },
+              { href: "", text: "Calendars" },
+              { href: "", text: "Checklists" },
+              { href: "", text: "Requests" },
+            ]},
+            { key: "masterdata", label: "Master Data", links: [
+              { href: "/masterdata/clientaccounts", text: "Client Accounts" },
+              { href: "/masterdata/locations", text: "Locations" },
+              { href: "", text: "Agencies" },
+              { href: "/masterdata/suppliers", text: "Suppliers" },
+              { href: "/masterdata/competitors", text: "Competitors" },
+              { href: "/masterdata/brands", text: "Brands" },
+              { href: "/masterdata/categories", text: "Categories" },
+              { href: "/masterdata/products", text: "Products" },
+            ]},
+            { key: "settings", label: "Administration", links: [
+              { href: "/administration/users", text: "Users" },
+              { href: "", text: "Teams" },
+              { href: "", text: "Roles" },
+              { href: "", text: "Data Transfers" },
+              { href: "", text: "Mass Uploads" },
+            ]},
+          ].map(({ key, label, links }) => (
+            <div key={key}>
+              <Collapsible open={openSection === key} onOpenChange={() => handleToggle(key)} className="space-y-2">
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className="w-full flex justify-between items-center">
+                    <span>{label}</span>
+                    {openSection === key ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="pl-4 space-y-1">
+                {links.map(({ href, text }) => (
+                  href ? (
+                    <Link key={href} href={href}>
+                      <Button variant="ghost" className="w-full justify-start font-light">
+                        {text}
+                      </Button>
+                    </Link>
+                  ) : (
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start font-light text-gray-400"
+                  >
+                    {text}
+                    </Button>
+                  )
+                ))}
+                </CollapsibleContent>
+              </Collapsible>
+              <Separator className="my-4" />
+            </div>
+          ))}
         </div>
       </div>
+      
       <div>
         <button
           onClick={handleLogout}
