@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import Layout from "@/components/core/Layout";
 import withAuth from "@/components/core/Auth";
-import SuppliersDataTable from "@/components/profiles/suppliers/suppliersDataTable";
+// import SuppliersDataTable from "@/components/profiles/suppliers/SuppliersDataTable";
+import SupplierDataTable from "@/components/profiles/suppliers/SupplierDataTable";
+
 
 const Suppliers = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -43,7 +45,7 @@ const Suppliers = () => {
         </h2>
 
         {suppliers && (
-          <SuppliersDataTable
+          <SupplierDataTable
             data={suppliers}
             onSave={(e) => setIsLoading(true)}
           />
