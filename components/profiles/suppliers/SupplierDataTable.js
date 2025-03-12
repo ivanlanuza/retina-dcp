@@ -20,15 +20,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import DeleteModal from "@/components/core/DeleteModal";
-import ProductLocationsSidebar from "./ProductLocationsSidebar";
 
 import EditViewSidebar from "./EditViewSidebar";
 import AddEntrySidebar from "./AddEntrySidebar";
 import { useEffect } from "react";
 
-export default function ProductsDataTable({ data, supplierlist, brandlist, categorylist, onSave }) {
+export default function SupplierDataTable({ data, onSave }) {
   //const [data, setData] = useState(locationsdata);
-  console.log(data)
   const ITEMS_PER_PAGE = PAGINATION_LIMIT;
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,11 +40,6 @@ export default function ProductsDataTable({ data, supplierlist, brandlist, categ
   });
   const [addEntrySidebar, setAddEntrySidebar] = useState(false);
   const [deleteModal, setDeleteModal] = useState({ open: false, item: null });
-
-  const [assignLocationsSidebar, setAssignLocationsSidebar] = useState({
-    open: false,
-    item: null,
-  });
 
   const filteredData = useMemo(() => {
     return data.filter((item) =>
@@ -104,13 +97,13 @@ export default function ProductsDataTable({ data, supplierlist, brandlist, categ
         id: deleteModal.item.id,
       });
 
-      const response = await fetch("/api/masterdata/products/delete", {
+      const response = await fetch("/api/masterdata/suppliers/delete", {
         body: datapass,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        method: "PUT",
+        method: "DELETE",
       });
       if (response.ok) {
         setDeleteModal({ open: false, item: null });
@@ -119,15 +112,11 @@ export default function ProductsDataTable({ data, supplierlist, brandlist, categ
     }
   }
 
-  const handleAssignLocations = (item) => {
-    setAssignLocationsSidebar({ open: true, item });
-  };
-
   return (
     <div className="container mt-4 font-sans text-gray-900">
       <div className="flex justify-between mb-4">
         <Input
-          placeholder="Filter products..."
+          placeholder="Filter suppliers..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           className="max-w-sm"
@@ -140,7 +129,7 @@ export default function ProductsDataTable({ data, supplierlist, brandlist, categ
           >
             <Plus className="mr-2 h-4 w-4" /> Add New
           </Button>
-          <CSVLink data={filteredData} filename={"products_download.csv"}>
+          <CSVLink data={filteredData} filename={"suppliers_download.csv"}>
             {/*we can still remove some columns and spead other columns*/}
             <Button>
               <Download className="mr-2 h-4 w-4" /> Download List
@@ -153,13 +142,13 @@ export default function ProductsDataTable({ data, supplierlist, brandlist, categ
         <table className="min-w-full bg-white">
           <thead>
             <tr>
-              {["name", "description", "barcode", "brand", "category"].map((column) => (
+              {["name", "description"].map((column) => (
                 <th
                   key={column}
                   className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort(column)}
                 >
-                  {column === "externalcode" ? "External Code" : column}
+                  {column}
                   {sortColumn === column &&
                     (sortDirection === "asc" ? (
                       <ArrowUp className="inline ml-1" />
@@ -168,10 +157,6 @@ export default function ProductsDataTable({ data, supplierlist, brandlist, categ
                     ))}
                 </th>
               ))}
-
-              <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                Tags
-              </th>
               <th className="px-4 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
@@ -185,23 +170,6 @@ export default function ProductsDataTable({ data, supplierlist, brandlist, categ
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                   {item.description}
-                </td>
-                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {item.barcode}
-                </td>
-                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {item?.brand?.name}
-                </td>
-                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {item?.category?.name}
-                </td>
-                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {item.tags &&
-                    item.tags.split(",").map((tag) => (
-                      <Badge key={tag} variant="outline" className="mr-1">
-                        {tag}
-                      </Badge>
-                    ))}
                 </td>
                 <td className="px-2 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-medium">
                   <Button
@@ -224,13 +192,6 @@ export default function ProductsDataTable({ data, supplierlist, brandlist, categ
                     onClick={() => handleDelete(item)}
                   >
                     <Trash className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleAssignLocations(item)}
-                  >
-                    <MapPin className="h-4 w-4" />
                   </Button>
                 </td>
               </tr>
@@ -269,18 +230,12 @@ export default function ProductsDataTable({ data, supplierlist, brandlist, categ
         item={editViewSidebar.item}
         onClose={() => setEditViewSidebar(false)}
         onSave={onSave}
-        supplierlist={supplierlist}
-        brandlist={brandlist}
-        categorylist={categorylist}
       />
 
       <AddEntrySidebar
         open={addEntrySidebar}
         onClose={() => setAddEntrySidebar(false)}
         onSave={onSave}
-        supplierlist={supplierlist}
-        brandlist={brandlist}
-        categorylist={categorylist}
       />
 
       <DeleteModal
@@ -289,16 +244,10 @@ export default function ProductsDataTable({ data, supplierlist, brandlist, categ
           setDeleteModal({ open: false, item: null });
         }}
         onConfirm={(e) => confirmDelete()}
-        itemname={deleteModal.item?.name}
-        title="Are you sure you want to delete this product?"
-        description={`This action cannot be undone. This will permanently delete the product ${deleteModal.item?.name} and remove their data from our servers.`}
+        username={deleteModal.item?.name}
+        title="Are you sure you want to delete this client account?"
+        description={`This action cannot be undone. This will permanently delete the client account ${deleteModal.item?.name} and remove their data from our servers.`}
         proceedbutton={`Delete ${deleteModal.item?.name}`}
-      />
-
-      <ProductLocationsSidebar
-        open={assignLocationsSidebar.open}
-        item={assignLocationsSidebar.item}
-        onClose={() => setAssignLocationsSidebar({ open: false, item: null })}
       />
     </div>
   );

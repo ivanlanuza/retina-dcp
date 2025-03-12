@@ -8,6 +8,10 @@ const App = () => {
   const [products, setProducts] = useState([]);
   const [isLoadingSuppliers, setIsLoadingSuppliers] = useState(true);
   const [supplierlist, setSupplierList] = useState([]);
+  const [isLoadingBrands, setIsLoadingBrands] = useState(true);
+  const [brandlist, setBrandList] = useState([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+  const [categorylist, setCategoryList] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -37,9 +41,35 @@ const App = () => {
         //console.log(data);
         setIsLoadingSuppliers(false);
       });
+
+    fetch("/api/masterdata/brands/getBrands", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setBrandList(data);
+        //console.log(data);
+        setIsLoadingBrands(false);
+      });
+
+      fetch("/api/masterdata/categories/getCategories", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setCategoryList(data);
+          //console.log(data);
+          setIsLoadingCategories(false);
+        });
   }, [isLoading]);
 
-  if (isLoading || isLoadingSuppliers) {
+  if (isLoading || isLoadingSuppliers || isLoadingBrands || isLoadingCategories) {
     return (
       <Layout>
         <div className="mx-8 font-sans text-sm">
@@ -62,6 +92,8 @@ const App = () => {
           <ProductsDataTable
             data={products}
             supplierlist={supplierlist}
+            brandlist={brandlist}
+            categorylist={categorylist}
             onSave={(e) => setIsLoading(true)}
           />
         )}

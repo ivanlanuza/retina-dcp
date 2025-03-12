@@ -19,6 +19,8 @@ export default function EditViewSidebar({
   onClose,
   onSave,
   supplierlist,
+  brandlist,
+  categorylist
 }) {
   const [editeditemname, setEditedItemname] = useState("");
   const [editeddescription, setEditedDescription] = useState("");
@@ -27,6 +29,8 @@ export default function EditViewSidebar({
   const [editedtags, setEditedTags] = useState("");
   const [editedsupplier, setEditedSupplier] = useState("");
   const [validationerror, setValidationError] = useState("");
+  const [editedbrand, setEditedBrand] = useState("");
+  const [editedcategory, setEditedCategory] = useState("");
 
   useEffect(() => {
     if (item) {
@@ -36,6 +40,8 @@ export default function EditViewSidebar({
       setEditedExternalCode(item.externalcode);
       setEditedTags(item.tags);
       setEditedSupplier(item.supplierid);
+      setEditedBrand(item.brandid);
+      setEditedCategory(item.categoryid);
     }
   }, [item]);
 
@@ -66,6 +72,8 @@ export default function EditViewSidebar({
         externalcode: editedexternalcode,
         tags: editedtags,
         supplierid: editedsupplier,
+        brandid: editedbrand,
+        categoryid: editedcategory,
       });
 
       const response = await fetch("/api/masterdata/products/edit", {
@@ -89,6 +97,8 @@ export default function EditViewSidebar({
         setEditedSupplier("");
         setEditedTags("");
         setValidationError("");
+        setEditedBrand("");
+        setEditedCategory("");
       }
     }
   }
@@ -171,6 +181,50 @@ export default function EditViewSidebar({
             </SelectTrigger>
             <SelectContent>
               {supplierlist.map((item) => (
+                <SelectItem key={item.name} value={item.id}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="supplier">Brand</Label>
+          <Select
+            value={editedbrand}
+            onValueChange={(e) => {
+              setEditedBrand(e);
+              setValidationError("");
+            }}
+            disabled={mode === "view"}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a Brand" />
+            </SelectTrigger>
+            <SelectContent>
+              {brandlist.map((item) => (
+                <SelectItem key={item.name} value={item.id}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="supplier">Category</Label>
+          <Select
+            value={editedcategory}
+            onValueChange={(e) => {
+              setEditedCategory(e);
+              setValidationError("");
+            }}
+            disabled={mode === "view"}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a Category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categorylist.map((item) => (
                 <SelectItem key={item.name} value={item.id}>
                   {item.name}
                 </SelectItem>

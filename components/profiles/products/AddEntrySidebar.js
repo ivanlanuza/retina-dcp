@@ -17,6 +17,8 @@ export default function AddEntrySidebar({
   onClose,
   onSave,
   supplierlist,
+  brandlist,
+  categorylist
 }) {
   const [newrecordname, setNewRecordName] = useState("");
   const [newrecorddescription, setNewRecordDescription] = useState("");
@@ -25,6 +27,8 @@ export default function AddEntrySidebar({
   const [newrecordexternalcode, setNewRecordExternalCode] = useState("");
   const [newrecordtags, setNewRecordTags] = useState("");
   const [validationerror, setValidationError] = useState("");
+  const [newrecordbrand, setNewRecordBrand] = useState("");
+  const [newrecordcategory, setNewRecordCategory] = useState("");
 
   const [newItem, setNewItem] = useState({
     name: "",
@@ -61,6 +65,8 @@ export default function AddEntrySidebar({
         supplierid: newrecordsupplier,
         externalcode: newrecordexternalcode,
         tags: newrecordtags,
+        brandid: newrecordbrand,
+        categoryid: newrecordcategory,
       });
 
       const response = await fetch("/api/masterdata/products/create", {
@@ -164,6 +170,50 @@ export default function AddEntrySidebar({
             </SelectTrigger>
             <SelectContent>
               {supplierlist.map((item) => (
+                <SelectItem key={item.name} value={item.id}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="role">Brand</Label>
+          <Select
+            value={newrecordbrand}
+            onValueChange={(e) => {
+              setNewRecordBrand(e);
+              //alert(e);
+              setValidationError("");
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a brand" />
+            </SelectTrigger>
+            <SelectContent>
+              {brandlist.map((item) => (
+                <SelectItem key={item.name} value={item.id}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="role">Category</Label>
+          <Select
+            value={newrecordcategory}
+            onValueChange={(e) => {
+              setNewRecordCategory(e);
+              //alert(e);
+              setValidationError("");
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categorylist.map((item) => (
                 <SelectItem key={item.name} value={item.id}>
                   {item.name}
                 </SelectItem>
