@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function AddEntrySidebar({ open, onClose, onSave, rolelist }) {
+export default function AddEntrySidebar({ open, onClose, onSave, rolelist, agencylist, teamlist }) {
   const [newrecordusername, setNewRecordUsername] = useState("");
   const [newrecordpassword, setNewRecordPassword] = useState("");
   const [newrecordstatus, setNewRecordStatus] = useState("ACTIVE");
@@ -20,6 +20,8 @@ export default function AddEntrySidebar({ open, onClose, onSave, rolelist }) {
   const [newrecordtags, setNewRecordTags] = useState("");
   const [newrecordpasswordconfirm, setNewRecordPasswordConfirm] = useState("");
   const [validationerror, setValidationError] = useState("");
+  const [newrecordagency, setNewRecordAgency] = useState("");
+  const [newrecordteam, setNewRecordTeam] = useState("");
 
   const [newUser, setNewUser] = useState({
     username: "",
@@ -59,6 +61,16 @@ export default function AddEntrySidebar({ open, onClose, onSave, rolelist }) {
       setValidationError("Please select a role!");
     }
 
+    if (newrecordagency == "" || newrecordagency == null) {
+      errorflag = true;
+      setValidationError("Please select a agency!");
+    }
+
+    if (newrecordteam == "" || newrecordteam == null) {
+      errorflag = true;
+      setValidationError("Please select a team!");
+    }
+
     if (errorflag === false) {
       setValidationError("");
       const token = localStorage.getItem("token");
@@ -68,6 +80,8 @@ export default function AddEntrySidebar({ open, onClose, onSave, rolelist }) {
         status: newrecordstatus,
         role: newrecordrole,
         tags: newrecordtags,
+        agency: newrecordagency,
+        team: newrecordteam,
       });
 
       const response = await fetch("/api/users/create", {
@@ -91,6 +105,8 @@ export default function AddEntrySidebar({ open, onClose, onSave, rolelist }) {
         setNewRecordRole("");
         setNewRecordTags("");
         setValidationError("");
+        setNewRecordAgency("");
+        setNewRecordTeam("");
       }
     }
   }
@@ -173,6 +189,50 @@ export default function AddEntrySidebar({ open, onClose, onSave, rolelist }) {
               {rolelist.map((role) => (
                 <SelectItem key={role.name} value={role.id}>
                   {role.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="role">Agency</Label>
+          <Select
+            value={newrecordagency}
+            onValueChange={(e) => {
+              setNewRecordAgency(e);
+              //alert(e);
+              setValidationError("");
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a agency" />
+            </SelectTrigger>
+            <SelectContent>
+              {agencylist.map((agency) => (
+                <SelectItem key={agency.name} value={agency.id}>
+                  {agency.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="role">Teams</Label>
+          <Select
+            value={newrecordteam}
+            onValueChange={(e) => {
+              setNewRecordTeam(e);
+              //alert(e);
+              setValidationError("");
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a team" />
+            </SelectTrigger>
+            <SelectContent>
+              {teamlist.map((team) => (
+                <SelectItem key={team.name} value={team.id}>
+                  {team.name}
                 </SelectItem>
               ))}
             </SelectContent>

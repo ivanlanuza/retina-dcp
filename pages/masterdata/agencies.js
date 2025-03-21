@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import Layout from "@/components/core/Layout";
 import withAuth from "@/components/core/Auth";
-import RolesDataTable from "@/components/profiles/roles/RolesDataTable";
+import AgenciesDataTable from "@/components/profiles/agencies/AgenciesDataTable";
 
-const Roles = () => {
+const Competitors = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [roles, setRoles] = useState([]);
+  const [agencies, setAgencies] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    fetch("/api/masterdata/roles/getRoles", {
+    fetch("/api/masterdata/agencies/getAgencies", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -18,7 +18,7 @@ const Roles = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setRoles(data);
+        setAgencies(data);
         setIsLoading(false);
       });
   }, [isLoading]);
@@ -28,7 +28,7 @@ const Roles = () => {
       <Layout>
         <div className="mx-8 font-sans text-sm">
           <h2 className="text-2xl font-bold font-sans text-gray-800 mb-6">
-            Roles
+            Agencies
           </h2>
         </div>
       </Layout>
@@ -39,12 +39,12 @@ const Roles = () => {
     <Layout>
       <div className="mx-8 font-sans text-xs">
         <h2 className="text-2xl font-bold font-sans text-gray-800 mb-12">
-          Roles
+          Agencies
         </h2>
 
-        {roles && (
-          <RolesDataTable
-            data={roles}
+        {agencies && (
+          <AgenciesDataTable
+            data={agencies}
             onSave={(e) => setIsLoading(true)}
           />
         )}
@@ -53,4 +53,4 @@ const Roles = () => {
   );
 };
 
-export default withAuth(Roles);
+export default withAuth(Competitors);
