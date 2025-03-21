@@ -21,6 +21,8 @@ export default async function handler(req, res) {
       status: req.body.status,
       roleId: parseInt(req.body.role),
       tags: req.body.tags,
+      agencyid: parseInt(req.body.agency),
+      teamid: parseInt(req.body.team),
     };
 
     try {

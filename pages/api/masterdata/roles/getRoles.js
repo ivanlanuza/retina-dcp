@@ -1,5 +1,5 @@
-import { SystemResponse } from "../../../utils/backend/response";
-import { validateToken } from "../../../utils/backend/middleware";
+import { SystemResponse } from "@/utils/backend/response";
+import { validateToken } from "@/utils/backend/middleware";
 import { PrismaClient } from "@prisma/client";
 import { jwtDecode } from "jwt-decode";
 
@@ -10,31 +10,28 @@ export default async function handler(req, res) {
   const isTokenValid = validateToken(req, res);
   if (!isTokenValid) return;
 
-  const accountid = parseInt(
+  const accountId = parseInt(
     jwtDecode(req.headers.authorization.split(" ")[1]).accountId
   );
 
   if (req.method === "GET") {
     try {
-      const users = await prisma.users.findMany({
+      const roles = await prisma.roles.findMany({
         include: {
           account: true,
-          role: true,
-          agency: true,
-          team: true
+          users: true,
         },
         where: {
-          accountId: accountid,
+          accountId: accountId,
           isdeleted: false,
         },
       });
-      res.status(200).json(users);
-      return;
-      //return response.getSuccessResponse(res, 200, { users: users });
+
+      res.status(200).json(roles);
     } catch (error) {
       console.error(error);
       return response.getFailedResponse(res, 500, {
-        message: "Error retrieving users",
+        message: "Error retrieving roles",
         error: error.message,
       });
     }

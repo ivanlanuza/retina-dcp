@@ -23,6 +23,8 @@ export default async function handler(req, res) {
       roleId: parseInt(req.body.role),
       tags: req.body.tags,
       updatedAt: new Date(),
+      agencyid: parseInt(req.body.agency),
+      teamid: parseInt(req.body.team),
     };
 
     try {

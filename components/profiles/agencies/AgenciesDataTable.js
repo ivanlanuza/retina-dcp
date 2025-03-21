@@ -19,14 +19,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import DeleteModal from "../../core/DeleteModal";
+import DeleteModal from "@/components/core/DeleteModal";
+
 import EditViewSidebar from "./EditViewSidebar";
 import AddEntrySidebar from "./AddEntrySidebar";
-import AssignLocationsSidebar from "./AssignLocationsSidebar";
 import { useEffect } from "react";
 
-export default function UsersDataTable({ userdata, rolelist, agencylist, teamlist, onSave }) {
-  const [data, setData] = useState(userdata);
+export default function CompetitorsDataTable({ data, onSave }) {
+  //const [data, setData] = useState(locationsdata);
   const ITEMS_PER_PAGE = PAGINATION_LIMIT;
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,18 +36,14 @@ export default function UsersDataTable({ userdata, rolelist, agencylist, teamlis
   const [editViewSidebar, setEditViewSidebar] = useState({
     open: false,
     mode: "view",
-    user: null,
+    item: null,
   });
   const [addEntrySidebar, setAddEntrySidebar] = useState(false);
-  const [deleteModal, setDeleteModal] = useState({ open: false, user: null });
-  const [assignLocationsSidebar, setAssignLocationsSidebar] = useState({
-    open: false,
-    user: null,
-  });
+  const [deleteModal, setDeleteModal] = useState({ open: false, item: null });
 
   const filteredData = useMemo(() => {
-    return data.filter((user) =>
-      Object.values(user).some(
+    return data.filter((item) =>
+      Object.values(item).some(
         (value) =>
           value != null &&
           value.toString().toLowerCase().includes(filter.toLowerCase())
@@ -82,56 +78,45 @@ export default function UsersDataTable({ userdata, rolelist, agencylist, teamlis
     }
   };
 
-  const handleEdit = (user) => {
-    setEditViewSidebar({ open: true, mode: "edit", user });
+  const handleEdit = (item) => {
+    setEditViewSidebar({ open: true, mode: "edit", item });
   };
 
-  const handleView = (user) => {
-    setEditViewSidebar({ open: true, mode: "view", user });
+  const handleView = (item) => {
+    setEditViewSidebar({ open: true, mode: "view", item });
   };
 
-  const handleDelete = (user) => {
-    setDeleteModal({ open: true, user });
+  const handleDelete = (item) => {
+    setDeleteModal({ open: true, item });
   };
 
   async function confirmDelete() {
-    if (deleteModal.user) {
+    if (deleteModal.item) {
       const token = localStorage.getItem("token");
       let datapass = JSON.stringify({
-        userid: deleteModal.user.id,
+        id: deleteModal.item.id,
       });
 
-      const response = await fetch("/api/users/delete", {
+      const response = await fetch("/api/masterdata/agencies/delete", {
         body: datapass,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        method: "PUT",
+        method: "DELETE",
       });
       if (response.ok) {
-        setDeleteModal({ open: false, user: null });
+        setDeleteModal({ open: false, item: null });
         onSave();
       }
     }
   }
 
-  const handleAssignLocations = (user) => {
-    setAssignLocationsSidebar({ open: true, user });
-  };
-
-  const handleSaveLocations = (userId, locations) => {
-    setData(
-      data.map((user) => (user.id === userId ? { ...user, locations } : user))
-    );
-    setAssignLocationsSidebar({ open: false, user: null });
-  };
-
   return (
     <div className="container mt-4 font-sans text-gray-900">
       <div className="flex justify-between mb-4">
         <Input
-          placeholder="Filter users..."
+          placeholder="Filter agencies..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           className="max-w-sm"
@@ -144,7 +129,7 @@ export default function UsersDataTable({ userdata, rolelist, agencylist, teamlis
           >
             <Plus className="mr-2 h-4 w-4" /> Add New
           </Button>
-          <CSVLink data={filteredData} filename={"users_download.csv"}>
+          <CSVLink data={filteredData} filename={"agencies_download.csv"}>
             {/*we can still remove some columns and spead other columns*/}
             <Button>
               <Download className="mr-2 h-4 w-4" /> Download List
@@ -157,7 +142,7 @@ export default function UsersDataTable({ userdata, rolelist, agencylist, teamlis
         <table className="min-w-full bg-white">
           <thead>
             <tr>
-              {["username", "status", "roleId", "agencyid", "teamid"].map((column) => (
+              {["name", "description"].map((column) => (
                 <th
                   key={column}
                   className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
@@ -172,72 +157,41 @@ export default function UsersDataTable({ userdata, rolelist, agencylist, teamlis
                     ))}
                 </th>
               ))}
-              <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                Tags
-              </th>
               <th className="px-4 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map((user) => (
-              <tr key={user.id}>
+            {paginatedData.map((item) => (
+              <tr key={item.id}>
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {user.username}
+                  {item.name}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  <Badge
-                    variant={user.status === "ACTIVE" ? "secondary" : "outline"}
-                  >
-                    {user.status}
-                  </Badge>
-                </td>
-                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {user.role.name}
-                </td>
-                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {user?.agency?.name}
-                </td>
-                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {user?.team?.name}
-                </td>
-                <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                  {user.tags &&
-                    user.tags.split(",").map((tag) => (
-                      <Badge key={tag} variant="outline" className="mr-1">
-                        {tag}
-                      </Badge>
-                    ))}
+                  {item.description}
                 </td>
                 <td className="px-2 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 font-medium">
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleEdit(user)}
+                    onClick={() => handleEdit(item)}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleView(user)}
+                    onClick={() => handleView(item)}
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleDelete(user)}
+                    onClick={() => handleDelete(item)}
                   >
                     <Trash className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleAssignLocations(user)}
-                  >
-                    <MapPin className="h-4 w-4" />
                   </Button>
                 </td>
               </tr>
@@ -273,40 +227,27 @@ export default function UsersDataTable({ userdata, rolelist, agencylist, teamlis
       <EditViewSidebar
         open={editViewSidebar.open}
         mode={editViewSidebar.mode}
-        user={editViewSidebar.user}
+        item={editViewSidebar.item}
         onClose={() => setEditViewSidebar(false)}
         onSave={onSave}
-        rolelist={rolelist}
-        agencylist={agencylist}
-        teamlist={teamlist}
       />
 
       <AddEntrySidebar
         open={addEntrySidebar}
         onClose={() => setAddEntrySidebar(false)}
         onSave={onSave}
-        rolelist={rolelist}
-        agencylist={agencylist}
-        teamlist={teamlist}
       />
 
       <DeleteModal
         open={deleteModal.open}
         onClose={() => {
-          setDeleteModal({ open: false, user: null });
+          setDeleteModal({ open: false, item: null });
         }}
         onConfirm={(e) => confirmDelete()}
-        username={deleteModal.user?.username}
-        title="Are you sure you want to delete this user?"
-        description={`This action cannot be undone. This will permanently delete the user account for ${deleteModal.user?.username} and remove their data from our servers.`}
-        proceedbutton={`Delete ${deleteModal.user?.username}`}
-      />
-
-      <AssignLocationsSidebar
-        open={assignLocationsSidebar.open}
-        user={assignLocationsSidebar.user}
-        onClose={() => setAssignLocationsSidebar({ open: false, user: null })}
-        onSave={handleSaveLocations}
+        username={deleteModal.item?.name}
+        title="Are you sure you want to delete this client account?"
+        description={`This action cannot be undone. This will permanently delete the client account ${deleteModal.item?.name} and remove their data from our servers.`}
+        proceedbutton={`Delete ${deleteModal.item?.name}`}
       />
     </div>
   );

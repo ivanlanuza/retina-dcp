@@ -6,8 +6,12 @@ import withAuth from "@/components/core/Auth";
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingRoles, setIsLoadingRoles] = useState(true);
+  const [isLoadingAgencies, setIsLoadingAgencies] = useState(true);
+  const [isLoadingTeams, setIsLoadingTeams] = useState(true);
   const [users, setUsers] = useState([]);
   const [rolelist, setRoleList] = useState([]);
+  const [teamlist, setTeamList] = useState([]);
+  const [agencylist, setAgencyList] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -36,9 +40,35 @@ const App = () => {
         //console.log(data);
         setIsLoadingRoles(false);
       });
+    
+      fetch("/api/masterdata/agencies/getAgencies", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setAgencyList(data);
+          //console.log(data);
+          setIsLoadingAgencies(false);
+        });
+
+        fetch("/api/masterdata/teams/getTeams", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            setTeamList(data);
+            //console.log(data);
+            setIsLoadingTeams(false);
+          });
   }, [isLoading]);
 
-  if (isLoading || isLoadingRoles) {
+  if (isLoading || isLoadingRoles || isLoadingAgencies || isLoadingTeams) {
     return (
       <Layout>
         <div className="mx-8 font-sans text-xs">
@@ -60,6 +90,8 @@ const App = () => {
           <UsersDataTable
             userdata={users}
             rolelist={rolelist}
+            agencylist={agencylist}
+            teamlist={teamlist}
             onSave={(e) => setIsLoading(true)}
           />
         )}

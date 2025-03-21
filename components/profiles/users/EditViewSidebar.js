@@ -19,6 +19,8 @@ export default function EditViewSidebar({
   onClose,
   onSave,
   rolelist,
+  agencylist,
+  teamlist
 }) {
   const [editedusername, setEditedUsername] = useState("");
   const [editedfirstname, setEditedFirstName] = useState("");
@@ -27,6 +29,8 @@ export default function EditViewSidebar({
   const [editedrole, setEditedRole] = useState("");
   const [editedtags, setEditedTags] = useState("");
   const [validationerror, setValidationError] = useState("");
+  const [editedagency, setEditedAgency] = useState("");
+  const [editedteam, setEditedTeam] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -36,6 +40,8 @@ export default function EditViewSidebar({
       setEditedStatus(user.status);
       setEditedRole(user.roleId);
       setEditedTags(user.tags);
+      setEditedAgency(user.agencyid);
+      setEditedTeam(user.teamid);
     }
   }, [user]);
 
@@ -55,6 +61,16 @@ export default function EditViewSidebar({
       setValidationError("Please select a role!");
     }
 
+    if (editedagency == "" || editedagency == null) {
+      errorflag = true;
+      setValidationError("Please select a agency!");
+    }
+
+    if (editedteam == "" || editedteam == null) {
+      errorflag = true;
+      setValidationError("Please select a team!");
+    }
+
     if (errorflag === false) {
       setValidationError("");
       const token = localStorage.getItem("token");
@@ -66,6 +82,8 @@ export default function EditViewSidebar({
         status: editedstatus,
         role: editedrole,
         tags: editedtags,
+        agency: editedagency,
+        team: editedteam,
       });
 
       const response = await fetch("/api/users/edit", {
@@ -89,6 +107,8 @@ export default function EditViewSidebar({
         setEditedRole("");
         setEditedTags("");
         setValidationError("");
+        setEditedAgency("");
+        setEditedTeam("");
       }
     }
   }
@@ -173,6 +193,50 @@ export default function EditViewSidebar({
               {rolelist.map((role) => (
                 <SelectItem key={role.name} value={role.id}>
                   {role.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="role">Agency</Label>
+          <Select
+            value={editedagency}
+            onValueChange={(e) => {
+              setEditedAgency(e);
+              setValidationError("");
+            }}
+            disabled={mode === "view"}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a agency" />
+            </SelectTrigger>
+            <SelectContent>
+              {agencylist.map((agency) => (
+                <SelectItem key={agency.name} value={agency.id}>
+                  {agency.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="role">Team</Label>
+          <Select
+            value={editedteam}
+            onValueChange={(e) => {
+              setEditedTeam(e);
+              setValidationError("");
+            }}
+            disabled={mode === "view"}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a team" />
+            </SelectTrigger>
+            <SelectContent>
+              {teamlist.map((team) => (
+                <SelectItem key={team.name} value={team.id}>
+                  {team.name}
                 </SelectItem>
               ))}
             </SelectContent>

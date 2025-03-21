@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import Layout from "@/components/core/Layout";
 import withAuth from "@/components/core/Auth";
-import RolesDataTable from "@/components/profiles/roles/RolesDataTable";
+import TeamsDataTable from "@/components/profiles/teams/TeamsDataTable";
 
-const Roles = () => {
+const Teams = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [roles, setRoles] = useState([]);
+  const [teams, setTeams] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    fetch("/api/masterdata/roles/getRoles", {
+    fetch("/api/masterdata/teams/getTeams", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -18,7 +18,7 @@ const Roles = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setRoles(data);
+        setTeams(data);
         setIsLoading(false);
       });
   }, [isLoading]);
@@ -28,7 +28,7 @@ const Roles = () => {
       <Layout>
         <div className="mx-8 font-sans text-sm">
           <h2 className="text-2xl font-bold font-sans text-gray-800 mb-6">
-            Roles
+            Teams
           </h2>
         </div>
       </Layout>
@@ -39,12 +39,12 @@ const Roles = () => {
     <Layout>
       <div className="mx-8 font-sans text-xs">
         <h2 className="text-2xl font-bold font-sans text-gray-800 mb-12">
-          Roles
+          Teams
         </h2>
 
-        {roles && (
-          <RolesDataTable
-            data={roles}
+        {teams && (
+          <TeamsDataTable
+            data={teams}
             onSave={(e) => setIsLoading(true)}
           />
         )}
@@ -53,4 +53,4 @@ const Roles = () => {
   );
 };
 
-export default withAuth(Roles);
+export default withAuth(Teams);

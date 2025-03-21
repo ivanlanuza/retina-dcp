@@ -63,7 +63,7 @@ export function MainSideBar({ companyinitials }) {
             { key: "masterdata", label: "Master Data", links: [
               { href: "/masterdata/clientaccounts", text: "Client Accounts" },
               { href: "/masterdata/locations", text: "Locations" },
-              { href: "", text: "Agencies" },
+              { href: "/masterdata/agencies", text: "Agencies" },
               { href: "/masterdata/suppliers", text: "Suppliers" },
               { href: "/masterdata/competitors", text: "Competitors" },
               { href: "/masterdata/brands", text: "Brands" },
@@ -72,8 +72,8 @@ export function MainSideBar({ companyinitials }) {
             ]},
             { key: "settings", label: "Administration", links: [
               { href: "/administration/users", text: "Users" },
-              { href: "", text: "Teams" },
-              { href: "", text: "Roles" },
+              { href: "/administration/teams", text: "Teams" },
+              { href: "/administration/roles", text: "Roles" },
               { href: "", text: "Data Transfers" },
               { href: "", text: "Mass Uploads" },
             ]},
