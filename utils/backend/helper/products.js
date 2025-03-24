@@ -31,6 +31,8 @@ export const processRecords = async (records) => {
             if (productLocations.error) {
                 throw new Error(productLocations.error);
             }
+        }, {
+            timeout: 30000,
         });
         response.result = "Transaction successful";
     } catch (e) {
