@@ -96,12 +96,10 @@ const App = () => {
 
   const goToReview = () => {
     setScreen("review");
-    //console.log("review", questions);
   };
 
   const backToCreate = () => {
     setScreen("create");
-    //console.log("back to create", questions);
   };
 
   const goToSettings = () => {

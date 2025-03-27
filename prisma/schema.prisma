@@ -56,6 +56,7 @@ model Accounts {
   DTR                  DTR[]
   ProductLocations     ProductLocations[]
   InventoryAdjustments InventoryAdjustments[]
+  TransactionType      TransactionType[]
 }
 
 model Users {
@@ -104,6 +105,8 @@ model Users {
   SurveySubmissions    SurveySubmissions[]
   ProductLocations     ProductLocations[]
   InventoryAdjustments InventoryAdjustments[]
+  TransactionType      TransactionType[]      @relation("TrxTypeCreatedBy")
+  TransactionType2     TransactionType[]      @relation("TrxTypeUpdatedBy")
 }
 
 model Roles {
@@ -540,6 +543,8 @@ model ProductLocations {
   accountid      Int?
   account        Accounts? @relation(fields: [accountid], references: [id])
   createdAt      DateTime  @default(now())
+
+  @@unique([accountid, productid, locationid])
 }
 
 model InventoryAdjustments {
@@ -558,4 +563,21 @@ model InventoryAdjustments {
   account           Accounts? @relation(fields: [accountid], references: [id])
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
+
+  @@unique([accountid, productid, locationid])
+}
+
+model TransactionType {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  account     Accounts @relation(fields: [accountId], references: [id])
+  accountId   Int
+  isDeleted   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  createdBy   Users?   @relation("TrxTypeCreatedBy", fields: [createdById], references: [id])
+  createdById Int?
+  updatedAt   DateTime @updatedAt
+  updatedBy   Users?   @relation("TrxTypeUpdatedBy", fields: [updatedById], references: [id])
+  updatedById Int?
 }
