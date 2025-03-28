@@ -537,6 +537,8 @@ model ProductLocations {
   location       Locations @relation(fields: [locationid], references: [id])
   isactive       Boolean   @default(true)
   inventorycount Int       @default(0)
+  transactionTypeId Int?
+  transactionType   TransactionType? @relation(fields: [transactionTypeId], references: [id])
   isdeleted      Boolean   @default(false)
   userid         Int?
   user           Users?    @relation(fields: [userid], references: [id])
@@ -556,6 +558,8 @@ model InventoryAdjustments {
   oldinventorycount Int
   adjustmentqty     Int
   newinventorycount Int
+  transactionTypeId Int? 
+  transactionType   TransactionType? @relation(fields: [transactionTypeId], references: [id])
   isdeleted         Boolean   @default(false)
   userid            Int?
   user              Users?    @relation(fields: [userid], references: [id])
@@ -580,4 +584,6 @@ model TransactionType {
   updatedAt   DateTime @updatedAt
   updatedBy   Users?   @relation("TrxTypeUpdatedBy", fields: [updatedById], references: [id])
   updatedById Int?
+  inventoryAdjustments InventoryAdjustments[]
+  productLocations     ProductLocations[]
 }

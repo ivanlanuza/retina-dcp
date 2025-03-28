@@ -59,6 +59,7 @@ export const saveAdjustmentTransactions = async (prisma, records) => {
                         adjustmentqty: data.adjustmentQty,
                         newinventorycount: data.newInventoryCount,
                         updatedAt: new Date(),
+                        transactionTypeId: records.adjustments.transactionTypeId
                     },
                     create: {
                         productid: data.productid,
@@ -69,6 +70,7 @@ export const saveAdjustmentTransactions = async (prisma, records) => {
                         isdeleted: false,
                         userid: records.token.userId || null,
                         accountid: records.token.accountId || null,
+                        transactionTypeId: records.adjustments.transactionTypeId
                     },
                 });
             })
@@ -98,6 +100,7 @@ export const saveProductLocations = async (prisma, records) => {
                     },
                     update: {
                         inventorycount: data.newInventoryCount,
+                        transactionTypeId: records.adjustments.transactionTypeId
                     },
                     create: {
                         productid: data.productid,
@@ -107,6 +110,7 @@ export const saveProductLocations = async (prisma, records) => {
                         isdeleted: false,
                         userid: records.token.userId || null,
                         accountid: records.token.accountId || null,
+                        transactionTypeId: records.adjustments.transactionTypeId
                     },
                 });
             })

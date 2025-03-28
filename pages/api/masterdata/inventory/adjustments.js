@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     const token = jwtDecode(req.headers.authorization.split(" ")[1]);
     const payload = {
         token: {
-            accountId: token.accountId,
+            accountId: token.accountId || req.body.accountid,
             userId: token.userId,
         },
         adjustments: {
