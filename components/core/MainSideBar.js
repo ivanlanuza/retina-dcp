@@ -69,6 +69,7 @@ export function MainSideBar({ companyinitials }) {
               { href: "/masterdata/brands", text: "Brands" },
               { href: "/masterdata/categories", text: "Categories" },
               { href: "/masterdata/products", text: "Products" },
+              { href: "/masterdata/inventories", text: "Inventory" },
             ]},
             { key: "settings", label: "Administration", links: [
               { href: "/administration/users", text: "Users" },
