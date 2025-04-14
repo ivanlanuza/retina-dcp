@@ -16,19 +16,24 @@ export default async function handler(req, res) {
     const { id } = req.query;
 
     if (id) {
-      const news = await prisma.news.findUnique({
-        where: { id: parseInt(id) },
-        include: {
-          account: true,
-          NewsUsers: true,
-        },
-      });
+        const news = await prisma.news.findUnique({
+            where: { id: parseInt(id) },
+            include: {
+              account: true,
+              NewsUsers: {
+                where: {
+                  isdeleted: false,
+                },
+              },
+            },
+        });
+          
 
       if (!news) {
         return response.getFailedResponse(res, 404, { message: "News not found" });
       }
 
-      return response.getSuccessResponse(res, 200, { news });
+      return response.getSuccessResponse(res, 200, { news: news });
     }
 
     const newsList = await prisma.news.findMany({

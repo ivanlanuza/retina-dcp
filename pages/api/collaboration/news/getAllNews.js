@@ -15,20 +15,24 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     try {
-      const newsList = await prisma.news.findMany({
-        where: {
-          isdeleted: false,
-          accountid: accountId,
-        },
-        include: {
-          account: true,
-          NewsUsers: {
+        const newsList = await prisma.news.findMany({
+            where: {
+              isdeleted: false,
+              accountid: accountId,
+            },
             include: {
-              user: true
-            }
-          },
-        },
-      });
+              account: true,
+              NewsUsers: {
+                where: {
+                  isdeleted: false, 
+                },
+                include: {
+                  user: true,
+                },
+              },
+            },
+        });
+          
 
       return response.getSuccessResponse(res, 200, { news: newsList });
     } catch (error) {

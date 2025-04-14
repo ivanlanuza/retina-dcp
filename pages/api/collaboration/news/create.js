@@ -31,7 +31,7 @@ export default async function handler(req, res) {
       },
     });
 
-    // If visibility is LIMITED and userIds are provided, create NewsUsers entries
+    // Handle NewsUsers creation based on visibility
     if (visibility === "LIMITED" && userIds && userIds.length > 0) {
       await prisma.newsUsers.createMany({
         data: userIds.map(userid => ({
@@ -41,6 +41,26 @@ export default async function handler(req, res) {
           status: "SENT"
         }))
       });
+    } else if (visibility === "ALL") {
+      const allUsers = await prisma.users.findMany({
+        where: {
+          accountId: accountid,   // ✅ Correct field name
+          isdeleted: false
+        },
+        select: { id: true }
+      });
+    
+      if (allUsers.length > 0) {
+        await prisma.newsUsers.createMany({
+          data: allUsers.map(user => ({
+            accountid,
+            newsid: newNews.id,
+            userid: user.id,
+            status: "SENT"
+          })),
+          skipDuplicates: true
+        });
+      }
     }
 
     return response.getSuccessResponse(res, 201, { newNews });
