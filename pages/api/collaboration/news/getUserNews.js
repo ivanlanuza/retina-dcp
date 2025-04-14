@@ -1,6 +1,7 @@
 import { SystemResponse } from "@/utils/backend/response";
 import { validateToken } from "@/utils/backend/middleware";
 import prisma from "@/lib/prisma";
+import { jwtDecode } from "jwt-decode";
 
 const response = new SystemResponse();
 
@@ -13,33 +14,32 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { id } = req.query;
+    const tokenUserId = parseInt(
+      jwtDecode(req.headers.authorization.split(" ")[1]).userId
+    );
 
-    if (id) {
-      const newsUser = await prisma.newsUsers.findUnique({
-        where: { id: parseInt(id) },
-        include: {
-          News: true,
-          account: true,
-          user: true,
-        },
-      });
+    const targetUserId = req.query.id ? parseInt(req.query.id) : tokenUserId;
 
-      if (!newsUser) {
-        return response.getFailedResponse(res, 404, { message: "News user not found" });
-      }
-
-      return response.getSuccessResponse(res, 200, { userNews: newsUser });
-    }
-
-    const newsUsers = await prisma.newsUsers.findMany({
-      where: { isdeleted: false },
+    const userNews = await prisma.newsUsers.findMany({
+      where: {
+        userid: targetUserId,
+        isdeleted: false,
+      },
+      include: {
+        News: true,
+        account: true,
+        user: true,
+      },
     });
 
-    return response.getSuccessResponse(res, 200, { newsUsers });
+    if (!userNews || userNews.length === 0) {
+      return response.getFailedResponse(res, 404, { message: "No news found for this user" });
+    }
+
+    return response.getSuccessResponse(res, 200, { userNews: userNews });
   } catch (error) {
     return response.getFailedResponse(res, 500, { 
-      message: "Error fetching news users", 
+      message: "Error fetching user news", 
       error: error.message 
     });
   }
