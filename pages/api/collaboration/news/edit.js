@@ -19,7 +19,6 @@ export default async function handler(req, res) {
       return response.getFailedResponse(res, 400, { message: "News ID is required" });
     }
 
-    // First update the news entry
     const updatedNews = await prisma.news.update({
       where: { id: parseInt(id) },
       data: { 
@@ -31,27 +30,46 @@ export default async function handler(req, res) {
       },
     });
 
-    // Handle NewsUsers if visibility is LIMITED
-    if (visibility === "LIMITED") {
-      // First remove existing NewsUsers entries (soft delete)
-      await prisma.newsUsers.updateMany({
-        where: { 
+    // Soft delete existing NewsUsers
+    await prisma.newsUsers.updateMany({
+      where: { 
+        newsid: parseInt(id),
+        isdeleted: false
+      },
+      data: { isdeleted: true }
+    });
+
+    // Add new NewsUsers based on visibility
+    if (visibility === "LIMITED" && userIds && userIds.length > 0) {
+      const accountid = updatedNews.accountid;
+      await prisma.newsUsers.createMany({
+        data: userIds.map(userid => ({
+          accountid,
           newsid: parseInt(id),
+          userid,
+          status: "SENT"
+        }))
+      });
+    } else if (visibility === "ALL") {
+      const accountId = updatedNews.accountid;
+
+      const allUsers = await prisma.users.findMany({
+        where: {
+          accountId,
           isdeleted: false
         },
-        data: { isdeleted: true }
+        select: { id: true }
       });
 
-      // Create new NewsUsers entries if userIds are provided
-      if (userIds && userIds.length > 0) {
-        const accountid = updatedNews.accountid;
+      if (allUsers.length > 0) {
         await prisma.newsUsers.createMany({
-          data: userIds.map(userid => ({
-            accountid,
+          data: allUsers.map(user => ({
+            accountid: accountId,
             newsid: parseInt(id),
-            userid,
+            userid: user.id,
             status: "SENT"
-          }))
+          })),
+          skipDuplicates: true
         });
       }
     }
